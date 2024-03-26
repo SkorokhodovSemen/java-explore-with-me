@@ -57,6 +57,7 @@ public class BaseClient {
         }
         return prepareClientResponse(statsServiceResponse);
     }
+
     private HttpHeaders defaultHeaders(Long userId) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
