@@ -25,6 +25,8 @@ public class StatsServiceImpl implements StatsService {
             if (uris.isEmpty()) {
                 return repository.getStatsWhereUniqueTrueUrisEmpty(start, end);
             } else {
+                System.out.println("ПРИШЕЛ");
+                System.out.println(repository.getStatsWhereUniqueTrueUrisExist(start, end, uris));
                 return repository.getStatsWhereUniqueTrueUrisExist(start, end, uris);
             }
         } else {
