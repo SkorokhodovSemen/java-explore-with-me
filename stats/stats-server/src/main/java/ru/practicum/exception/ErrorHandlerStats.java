@@ -9,13 +9,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
 
 @RestControllerAdvice
 @Slf4j
 public class ErrorHandlerStats {
     @ExceptionHandler({ConstraintViolationException.class,
             MethodArgumentNotValidException.class,
-            MissingRequestHeaderException.class})
+            MissingRequestHeaderException.class, ValidationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponseStats onMethodArgumentNotValidException(Exception e) {
         return new ErrorResponseStats(e.getMessage());
