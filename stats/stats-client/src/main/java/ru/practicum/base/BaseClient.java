@@ -18,7 +18,7 @@ public class BaseClient {
         this.rest = rest;
     }
 
-    protected ResponseEntity<List<ViewStatsDto>> getListStats(String s, Map<String, Object> parameters) {
+    protected ResponseEntity<List<ViewStatsDto>> getListStats(String s, @Nullable Map<String, Object> parameters) {
         return makeAndSendRequest2(s, parameters);
     }
 
@@ -34,7 +34,7 @@ public class BaseClient {
     }
 
     private ResponseEntity<List<ViewStatsDto>> makeAndSendRequest2(String path, @Nullable Map<String, Object> parameters) {
-        HttpEntity<List<ViewStatsDto>> requestEntity = new HttpEntity<>(null);
+        HttpEntity<List<ViewStatsDto>> requestEntity = new HttpEntity<>(null, defaultHeaders(null));
         ResponseEntity<List<ViewStatsDto>> statsServiceResponse;
         try {
                 statsServiceResponse = rest.exchange(path, HttpMethod.GET, requestEntity, new ParameterizedTypeReference<List<ViewStatsDto>>() {}, parameters);
