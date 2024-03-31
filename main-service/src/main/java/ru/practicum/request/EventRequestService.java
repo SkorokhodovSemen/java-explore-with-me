@@ -8,8 +8,9 @@ import java.util.List;
 
 public interface EventRequestService {
     List<EventRequestDto> getRequests(long userId, long eventId);
+
     ListChangeStatusEventRequestDto updateStatusEventRequest(ListEventRequestIdDto listEventRequestIdDto,
-                                                                   long userId, long eventId);
+                                                             long userId, long eventId);
 
     EventRequestDto createEventRequest(long eventId, long userId);
 

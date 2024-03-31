@@ -2,7 +2,6 @@ package ru.practicum.events.model;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.geo.Point;
 import ru.practicum.categories.model.Category;
 import ru.practicum.compilations.model.Compilation;
 import ru.practicum.user.model.User;

@@ -24,13 +24,13 @@ public class EventEntityDto {
     private String eventDate;
     @NotNull(groups = Create.class)
     private Location location;
-//    @NotNull(groups = Create.class)
+    //    @NotNull(groups = Create.class)
     private Boolean paid;
-//    @PositiveOrZero(groups = {Create.class})
+    //    @PositiveOrZero(groups = {Create.class})
     private Long participantLimit;
-//    @NotNull(groups = Create.class)
+    //    @NotNull(groups = Create.class)
     private Boolean requestModeration;
     @NotBlank(groups = Create.class)
-    @Size(min = 3, max =120, groups = {Create.class, Update.class, Admin.class})
+    @Size(min = 3, max = 120, groups = {Create.class, Update.class, Admin.class})
     private String title;
 }

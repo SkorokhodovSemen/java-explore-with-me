@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import ru.practicum.events.model.Event;
 import ru.practicum.events.model.State;
 
-import java.net.ContentHandler;
 import java.time.LocalDateTime;
 import java.util.List;
 

@@ -2,7 +2,6 @@ package ru.practicum.events;
 
 import ru.practicum.events.dto.*;
 import ru.practicum.events.model.State;
-import ru.practicum.user.dto.UserDto;
 
 import java.time.LocalDateTime;
 import java.util.List;

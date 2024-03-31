@@ -131,7 +131,7 @@ public abstract class EventMapper {
         eventAdminSearchDto.setState(event.getState());
         eventAdminSearchDto.setLocation(location);
         eventAdminSearchDto.setCreatedOn(event.getCreatedOn().format(DATE_TIME_FORMATTER));
-        if (event.getPublishedOn() != null){
+        if (event.getPublishedOn() != null) {
             eventAdminSearchDto.setPublishedOn(event.getPublishedOn().format(DATE_TIME_FORMATTER));
         }
         return eventAdminSearchDto;

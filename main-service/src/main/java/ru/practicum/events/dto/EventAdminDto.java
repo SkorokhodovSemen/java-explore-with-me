@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Data
 @RequiredArgsConstructor
-public class EventAdminDto extends EventEntityDto{
+public class EventAdminDto extends EventEntityDto {
     private String publishedOn;
     private StateAction stateAction;
 }
