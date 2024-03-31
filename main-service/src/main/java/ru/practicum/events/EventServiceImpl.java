@@ -245,7 +245,7 @@ public class EventServiceImpl implements EventService {
                                                        int size,
                                                        String uri,
                                                        String ip) {
-        createRequestToStatsAndUpdateViews(ip, uri);
+//        createRequestToStatsAndUpdateViews(ip, uri);
         Pageable pageable = null;
         if (sort.equals(EventSort.EVENT_DATE.toString())) {
             pageable = PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "eventDate"));
@@ -380,14 +380,14 @@ public class EventServiceImpl implements EventService {
         return eventAdminSearchDtos;
     }
 
-    private void createRequestToStatsAndUpdateViews(String ip, String uri){
-        EndpointHitsDto endpointHitsDto = new EndpointHitsDto();
-        endpointHitsDto.setIp(ip);
-        endpointHitsDto.setApp("ewm-main-service");
-        endpointHitsDto.setUri(uri);
-        endpointHitsDto.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        statsClient.create(endpointHitsDto);
-    }
+//    private void createRequestToStatsAndUpdateViews(String ip, String uri){
+//        EndpointHitsDto endpointHitsDto = new EndpointHitsDto();
+//        endpointHitsDto.setIp(ip);
+//        endpointHitsDto.setApp("ewm-main-service");
+//        endpointHitsDto.setUri(uri);
+//        endpointHitsDto.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+//        statsClient.create(endpointHitsDto);
+//    }
     private void updateViewsForOneEvent(long id, String uri) {
         Optional<Event> eventOptional = eventRepository.findById(id);
         validFoundForEvent(eventOptional, id);

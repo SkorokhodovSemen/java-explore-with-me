@@ -46,6 +46,12 @@ public class EventController {
                 "rangeStart = {}\n" +
                 "rangeEnd = {}\n" +
                 "sort = {}", text, paid, onlyAvailable, categories, rangeStart, rangeEnd, sort);
+        EndpointHitsDto endpointHitsDto = new EndpointHitsDto();
+        endpointHitsDto.setIp(httpServletRequest.getRemoteAddr());
+        endpointHitsDto.setApp("ewm-main-service");
+        endpointHitsDto.setUri(httpServletRequest.getRequestURI());
+        endpointHitsDto.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        statsClient.create(endpointHitsDto);
         return eventService.getEventsForQuery(text, paid, onlyAvailable, categories, rangeStart, rangeEnd, sort, from, size, httpServletRequest.getRequestURI(), httpServletRequest.getRemoteAddr());
     }
 
