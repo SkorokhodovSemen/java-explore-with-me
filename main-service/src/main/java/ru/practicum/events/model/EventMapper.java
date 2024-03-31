@@ -122,7 +122,6 @@ public abstract class EventMapper {
         eventAdminSearchDto.setCategory(event.getCategory());
         eventAdminSearchDto.setPaid(event.getPaid());
         eventAdminSearchDto.setEventDate(event.getEventDate().format(DATE_TIME_FORMATTER));
-//        eventAdminSearchDto.setEventDate(LocalDateTime.parse(event.getEventDate().format(DATE_TIME_FORMATTER), DATE_TIME_FORMATTER));
         eventAdminSearchDto.setInitiator(event.getInitiator());
         eventAdminSearchDto.setViews(event.getViews());
         eventAdminSearchDto.setConfirmedRequests(confirmedRequest);

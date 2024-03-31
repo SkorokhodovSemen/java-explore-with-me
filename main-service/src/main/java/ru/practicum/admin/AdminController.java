@@ -4,19 +4,17 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.categories.CategoryService;
 import ru.practicum.categories.dto.CategoryDto;
 import ru.practicum.compilations.CompilationService;
 import ru.practicum.compilations.dto.CompilationDto;
-import ru.practicum.compilations.dto.PostCompilationDto;
+import ru.practicum.compilations.dto.ResponseCompilationDto;
 import ru.practicum.events.EventService;
 import ru.practicum.events.dto.EventAdminDto;
 import ru.practicum.events.dto.EventAdminPatchDto;
 import ru.practicum.events.dto.EventAdminSearchDto;
-import ru.practicum.events.dto.EventDto;
 import ru.practicum.events.model.State;
 import ru.practicum.user.UserService;
 import ru.practicum.user.dto.UserDto;
@@ -110,9 +108,9 @@ public class AdminController {
 
     @PostMapping("/compilations")
     @ResponseStatus(HttpStatus.CREATED)
-    public CompilationDto createCompilation(@Validated(Create.class) @RequestBody PostCompilationDto postCompilationDto) {
-        log.info("Create new compilation = {}", postCompilationDto);
-        return compilationService.createCompilation(postCompilationDto);
+    public CompilationDto createCompilation(@Validated(Create.class) @RequestBody ResponseCompilationDto responseCompilationDto) {
+        log.info("Create new compilation = {}", responseCompilationDto);
+        return compilationService.createCompilation(responseCompilationDto);
     }
 
     @DeleteMapping("/compilations/{compId}")
@@ -123,9 +121,9 @@ public class AdminController {
     }
 
     @PatchMapping("/compilations/{compId}")
-    public CompilationDto updateCompilationById(@Validated(Update.class) @RequestBody PostCompilationDto postCompilationDto,
+    public CompilationDto updateCompilationById(@Validated(Update.class) @RequestBody ResponseCompilationDto responseCompilationDto,
                                                 @PathVariable("compId") long compId) {
         log.info("Update compilation = {}", compId);
-        return compilationService.updateCompilationById(postCompilationDto, compId);
+        return compilationService.updateCompilationById(responseCompilationDto, compId);
     }
 }

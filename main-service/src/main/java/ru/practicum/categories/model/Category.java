@@ -2,11 +2,8 @@ package ru.practicum.categories.model;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import ru.practicum.valid.Create;
-import ru.practicum.valid.Update;
 
 import javax.persistence.*;
-import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "categories")

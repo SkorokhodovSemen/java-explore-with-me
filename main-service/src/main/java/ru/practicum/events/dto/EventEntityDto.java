@@ -2,12 +2,10 @@ package ru.practicum.events.dto;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.geo.Point;
 import ru.practicum.events.model.Location;
 import ru.practicum.valid.*;
 
 import javax.validation.constraints.*;
-import java.time.LocalDateTime;
 
 @Data
 @RequiredArgsConstructor

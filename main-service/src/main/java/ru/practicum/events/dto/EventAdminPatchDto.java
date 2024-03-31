@@ -6,9 +6,7 @@ import ru.practicum.categories.model.Category;
 import ru.practicum.events.model.Location;
 import ru.practicum.events.model.State;
 import ru.practicum.user.model.User;
-import ru.practicum.valid.Update;
 
-import javax.validation.constraints.Positive;
 import java.time.LocalDateTime;
 
 @Data

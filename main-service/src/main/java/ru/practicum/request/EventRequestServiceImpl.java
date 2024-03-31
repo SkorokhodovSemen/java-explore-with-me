@@ -60,15 +60,16 @@ public class EventRequestServiceImpl implements EventRequestService {
                     "because it's not his Event", userId, eventId);
             throw new ConflictException("You can't change eventRequest for this Event");
         }
-        List<EventRequest> eventRequests = eventRequestRepository.getEventRequestsByEventsId(listEventRequestIdDto.getRequestIds());
+        List<EventRequest> eventRequests = eventRequestRepository
+                .getEventRequestsByEventsId(listEventRequestIdDto.getRequestIds());
+        if (eventRequests.size() == 1 && eventRequests.get(0).getStatus().equals(Status.CONFIRMED)) {
+            throw new ConflictException("You can't rejected this request, because it's confirmed");
+        }
         ListChangeStatusEventRequestDto listChangeStatusEventRequestDto = new ListChangeStatusEventRequestDto();
         List<EventRequestDto> eventRequestsConfirmed = new ArrayList<>();
         List<EventRequestDto> eventRequestsRejected = new ArrayList<>();
         long countEventRequestsConfirmed = eventRequestRepository.getCountConfirmedRequest(eventId);
         int i = 0;
-        if (eventRequests.size() == 1 && eventRequests.get(0).getStatus().equals(Status.CONFIRMED)){
-            throw new ConflictException("You can't rejected this request, because it's confirmed");
-        }
         if (listEventRequestIdDto.getStatus().equals(Status.REJECTED.toString())) {
             for (EventRequest eventRequest : eventRequests) {
                 eventRequest.setStatus(Status.REJECTED);
@@ -79,7 +80,7 @@ public class EventRequestServiceImpl implements EventRequestService {
             listChangeStatusEventRequestDto.setRejectedRequests(eventRequestsRejected);
             return listChangeStatusEventRequestDto;
         }
-        if (event.getParticipantLimit() == 0) {
+        if (event.getParticipantLimit() == 0 || !event.isRequestModeration()) {
             for (EventRequest eventRequest : eventRequests) {
                 eventRequest.setStatus(Status.CONFIRMED);
                 eventRequestRepository.save(eventRequest);
@@ -89,25 +90,8 @@ public class EventRequestServiceImpl implements EventRequestService {
             listChangeStatusEventRequestDto.setRejectedRequests(new ArrayList<>());
             return listChangeStatusEventRequestDto;
         }
-        if (!event.isRequestModeration()) {
-            for (EventRequest eventRequest : eventRequests) {
-                eventRequest.setStatus(Status.CONFIRMED);
-                eventRequestRepository.save(eventRequest);
-                eventRequestsConfirmed.add(EventRequestMapper.toEventRequestDto(eventRequest));
-            }
-            listChangeStatusEventRequestDto.setConfirmedRequests(eventRequestsConfirmed);
-            listChangeStatusEventRequestDto.setRejectedRequests(new ArrayList<>());
-            return listChangeStatusEventRequestDto;
-        }
-        if (eventRequests.size() == 1){
-            if (event.getParticipantLimit() == countEventRequestsConfirmed){
-//                EventRequest eventRequest = new EventRequest();
-//                eventRequest.setId(eventRequests.get(0).getId());
-//                eventRequest.setStatus(Status.REJECTED);
-//                eventRequest.setCreated(eventRequests.get(0).getCreated());
-//                eventRequest.setEvent(eventRequests.get(0).getEvent());
-//                eventRequest.setRequester(eventRequests.get(0).getRequester());
-//                eventRequestRepository.save(eventRequest);
+        if (eventRequests.size() == 1) {
+            if (event.getParticipantLimit() == countEventRequestsConfirmed) {
                 throw new ConflictException("Event is full");
             }
         }
@@ -145,7 +129,7 @@ public class EventRequestServiceImpl implements EventRequestService {
         if (event.getState().equals(State.CANCELED)) {
             log.info("User with id = {} can't create eventRequest for event with id = {} " +
                     "because it's CANCELED", userId, eventId);
-            throw new ConflictException("You can't create eventRequest for your Event");
+            throw new ConflictException("You can't create eventRequest because it's CANCELED");
         }
         if (event.getInitiator().getId() == userId) {
             log.info("User with id = {} can't create eventRequest for him event with id = {}", userId, eventId);
@@ -157,7 +141,7 @@ public class EventRequestServiceImpl implements EventRequestService {
                     "for this event with id = {} because it's full", userId, eventId);
             throw new ConflictException("For this event participantLimit is full");
         }
-        if (!eventRequestRepository.getEventRequestsByRequesterId(userId).isEmpty()){
+        if (!eventRequestRepository.getEventRequestsByRequesterId(userId).isEmpty()) {
             log.info("User with id = {} can't create eventRequest " +
                     "for this event with id = {} because it's second request", userId, eventId);
             throw new ConflictException("You can't send second request for this event");
@@ -167,9 +151,6 @@ public class EventRequestServiceImpl implements EventRequestService {
         eventRequest.setRequester(user);
         eventRequest.setCreated(LocalDateTime.parse(LocalDateTime.now().format(dateTimeFormatter), dateTimeFormatter));
         if (event.isRequestModeration()) {
-//            if (event.getParticipantLimit() == 0) {
-//                eventRequest.setStatus(Status.CONFIRMED);
-//            }
             eventRequest.setStatus(Status.PENDING);
         } else {
             eventRequest.setStatus(Status.CONFIRMED);

@@ -7,8 +7,6 @@ import ru.practicum.events.model.Location;
 import ru.practicum.events.model.State;
 import ru.practicum.user.model.User;
 
-import java.time.LocalDateTime;
-
 @Data
 @RequiredArgsConstructor
 public class EventCreatedDto {

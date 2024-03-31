@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class StatsClient extends BaseClient {
+public class StatsClient extends BaseClient{
 
     @Autowired
     public StatsClient(@Value("${stats-server.url}") String serverUrl, RestTemplateBuilder builder) {
@@ -29,17 +29,7 @@ public class StatsClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
-        Map<String, Object> parameters = Map.of(
-                "start", start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-                "end", end.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
-                "uris", uris.toArray(),
-                "unique", unique
-        );
-        return get("/stats?start={start}&end={end}&uris={uris}&unique={unique}", parameters);
-    }
-
-    public ResponseEntity<List<ViewStatsDto>> getStats2(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
+    public ResponseEntity<List<ViewStatsDto>> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
         Map<String, Object> parameters = Map.of(
                 "start", start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
                 "end", end.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),

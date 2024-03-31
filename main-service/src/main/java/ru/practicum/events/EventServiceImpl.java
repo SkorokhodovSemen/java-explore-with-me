@@ -1,18 +1,12 @@
 package ru.practicum.events;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
-import ru.practicum.EndpointHitsDto;
 import ru.practicum.ViewStatsDto;
 import ru.practicum.categories.CategoryRepository;
 import ru.practicum.categories.model.Category;
@@ -245,7 +239,6 @@ public class EventServiceImpl implements EventService {
                                                        int size,
                                                        String uri,
                                                        String ip) {
-//        createRequestToStatsAndUpdateViews(ip, uri);
         Pageable pageable = null;
         if (sort.equals(EventSort.EVENT_DATE.toString())) {
             pageable = PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "eventDate"));
@@ -269,7 +262,6 @@ public class EventServiceImpl implements EventService {
                         eventAdminSearchDtos
                                 .add(EventMapper.toEventAdminSearchDto(event,
                                         eventRequestRepository.getCountConfirmedRequest(event.getId())));
-//                        createRequestToStatsAndUpdateViews(ip, uri, event);
                     }
                 } else {
                     List<Event> events = eventRepository.getEventsWithAllPaidAndOnlyAvailable(text, categories, rangeStart, rangeEnd, pageable).getContent();
@@ -277,7 +269,6 @@ public class EventServiceImpl implements EventService {
                         eventAdminSearchDtos
                                 .add(EventMapper.toEventAdminSearchDto(event,
                                         eventRequestRepository.getCountConfirmedRequest(event.getId())));
-//                        createRequestToStatsAndUpdateViews(ip, uri, event);
                     }
                 }
             } else {
@@ -288,7 +279,6 @@ public class EventServiceImpl implements EventService {
                         eventAdminSearchDtos
                                 .add(EventMapper.toEventAdminSearchDto(event,
                                         eventRequestRepository.getCountConfirmedRequest(event.getId())));
-//                        createRequestToStatsAndUpdateViews(ip, uri, event);
                     }
                 } else {
                     List<Event> events = eventRepository.getEventsWithAllPaidAndNotAvailable(text, categories, rangeStart, rangeEnd, pageable).getContent();
@@ -296,7 +286,6 @@ public class EventServiceImpl implements EventService {
                         eventAdminSearchDtos
                                 .add(EventMapper.toEventAdminSearchDto(event,
                                         eventRequestRepository.getCountConfirmedRequest(event.getId())));
-//                        createRequestToStatsAndUpdateViews(ip, uri, event);
                     }
                 }
             }
@@ -308,7 +297,6 @@ public class EventServiceImpl implements EventService {
                         eventAdminSearchDtos
                                 .add(EventMapper.toEventAdminSearchDto(event,
                                         eventRequestRepository.getCountConfirmedRequest(event.getId())));
-//                        createRequestToStatsAndUpdateViews(ip, uri, event);
                     }
                 } else {
                     List<Event> events = eventRepository.getEventsWithOnlyPaidAndOnlyAvailable(text, categories, rangeStart, rangeEnd, pageable).getContent();
@@ -316,7 +304,6 @@ public class EventServiceImpl implements EventService {
                         eventAdminSearchDtos
                                 .add(EventMapper.toEventAdminSearchDto(event,
                                         eventRequestRepository.getCountConfirmedRequest(event.getId())));
-//                        createRequestToStatsAndUpdateViews(ip, uri, event);
                     }
                 }
             } else {
@@ -326,7 +313,6 @@ public class EventServiceImpl implements EventService {
                         eventAdminSearchDtos
                                 .add(EventMapper.toEventAdminSearchDto(event,
                                         eventRequestRepository.getCountConfirmedRequest(event.getId())));
-//                       createRequestToStatsAndUpdateViews(ip, uri, event);
                     }
                 } else {
                     List<Event> events = eventRepository.getEventsWithOnlyPaidAndNotAvailable(text, categories, rangeStart, rangeEnd, pageable).getContent();
@@ -334,7 +320,6 @@ public class EventServiceImpl implements EventService {
                         eventAdminSearchDtos
                                 .add(EventMapper.toEventAdminSearchDto(event,
                                         eventRequestRepository.getCountConfirmedRequest(event.getId())));
-//                        createRequestToStatsAndUpdateViews(ip, uri, event);
                     }
                 }
             }
@@ -346,7 +331,6 @@ public class EventServiceImpl implements EventService {
                         eventAdminSearchDtos
                                 .add(EventMapper.toEventAdminSearchDto(event,
                                         eventRequestRepository.getCountConfirmedRequest(event.getId())));
-//                        createRequestToStatsAndUpdateViews(ip, uri, event);
                     }
                 } else {
                     List<Event> events = eventRepository.getEventsWithNotPaidAndOnlyAvailable(text, categories, rangeStart, rangeEnd, pageable).getContent();
@@ -354,7 +338,6 @@ public class EventServiceImpl implements EventService {
                         eventAdminSearchDtos
                                 .add(EventMapper.toEventAdminSearchDto(event,
                                         eventRequestRepository.getCountConfirmedRequest(event.getId())));
-//                        createRequestToStatsAndUpdateViews(ip, uri, event);
                     }
                 }
             } else {
@@ -364,7 +347,6 @@ public class EventServiceImpl implements EventService {
                         eventAdminSearchDtos
                                 .add(EventMapper.toEventAdminSearchDto(event,
                                         eventRequestRepository.getCountConfirmedRequest(event.getId())));
-//                        createRequestToStatsAndUpdateViews(ip, uri, event);
                     }
                 } else {
                     List<Event> events = eventRepository.getEventsWithNotPaidAndNotAvailable(text, categories, rangeStart, rangeEnd, pageable).getContent();
@@ -372,7 +354,6 @@ public class EventServiceImpl implements EventService {
                         eventAdminSearchDtos
                                 .add(EventMapper.toEventAdminSearchDto(event,
                                         eventRequestRepository.getCountConfirmedRequest(event.getId())));
-//                        createRequestToStatsAndUpdateViews(ip, uri, event);
                     }
                 }
             }
@@ -380,21 +361,13 @@ public class EventServiceImpl implements EventService {
         return eventAdminSearchDtos;
     }
 
-//    private void createRequestToStatsAndUpdateViews(String ip, String uri){
-//        EndpointHitsDto endpointHitsDto = new EndpointHitsDto();
-//        endpointHitsDto.setIp(ip);
-//        endpointHitsDto.setApp("ewm-main-service");
-//        endpointHitsDto.setUri(uri);
-//        endpointHitsDto.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-//        statsClient.create(endpointHitsDto);
-//    }
     private void updateViewsForOneEvent(long id, String uri) {
         Optional<Event> eventOptional = eventRepository.findById(id);
         validFoundForEvent(eventOptional, id);
         Event event = eventOptional.get();
         List<String> uris = new ArrayList<>();
         uris.add(uri);
-        List<ViewStatsDto> viewStatsDtos1 = statsClient.getStats2(LocalDateTime.now().minusYears(100),
+        List<ViewStatsDto> viewStatsDtos1 = statsClient.getStats(LocalDateTime.now().minusYears(100),
                 LocalDateTime.now().plusYears(100), uris, true).getBody();
         event.setViews(viewStatsDtos1.get(0).getHits());
         eventRepository.save(event);

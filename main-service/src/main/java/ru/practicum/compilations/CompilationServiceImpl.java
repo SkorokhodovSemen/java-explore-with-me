@@ -8,7 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.compilations.dto.CompilationDto;
-import ru.practicum.compilations.dto.PostCompilationDto;
+import ru.practicum.compilations.dto.ResponseCompilationDto;
 import ru.practicum.compilations.model.Compilation;
 import ru.practicum.compilations.model.CompilationMapper;
 import ru.practicum.events.EventRepository;
@@ -17,7 +17,6 @@ import ru.practicum.exception.NotFoundException;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,28 +37,29 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     @Transactional
-    public CompilationDto createCompilation(PostCompilationDto postCompilationDto) {
-        List<Event> events = eventRepository.getEventsForCompilation(postCompilationDto.getEvents());
-        if (postCompilationDto.getPinned() == null){
-            postCompilationDto.setPinned(false);
+    public CompilationDto createCompilation(ResponseCompilationDto responseCompilationDto) {
+        List<Event> events = eventRepository.getEventsForCompilation(responseCompilationDto.getEvents());
+        if (responseCompilationDto.getPinned() == null) {
+            responseCompilationDto.setPinned(false);
         }
-        return CompilationMapper.toCompilationDto(compilationRepository.save(CompilationMapper.toCompilation(postCompilationDto, events)));
+        return CompilationMapper.toCompilationDto(compilationRepository
+                .save(CompilationMapper.toCompilation(responseCompilationDto, events)));
     }
 
     @Override
     @Transactional
-    public CompilationDto updateCompilationById(PostCompilationDto postCompilationDto, long compId) {
+    public CompilationDto updateCompilationById(ResponseCompilationDto responseCompilationDto, long compId) {
         Optional<Compilation> compilationOptional = compilationRepository.findById(compId);
         validFoundForCompilation(compilationOptional, compId);
         Compilation compilation = compilationOptional.get();
-        if (postCompilationDto.getTitle() != null) {
-            compilation.setTitle(postCompilationDto.getTitle());
+        if (responseCompilationDto.getTitle() != null) {
+            compilation.setTitle(responseCompilationDto.getTitle());
         }
-        if (postCompilationDto.getPinned() != null) {
-            compilation.setPinned(postCompilationDto.getPinned());
+        if (responseCompilationDto.getPinned() != null) {
+            compilation.setPinned(responseCompilationDto.getPinned());
         }
-        if (postCompilationDto.getEvents() != null) {
-            List<Event> events = eventRepository.getEventsForCompilation(postCompilationDto.getEvents());
+        if (responseCompilationDto.getEvents() != null) {
+            List<Event> events = eventRepository.getEventsForCompilation(responseCompilationDto.getEvents());
             compilation.setEvents(events);
         }
         return CompilationMapper.toCompilationDto(compilationRepository.save(compilation));
