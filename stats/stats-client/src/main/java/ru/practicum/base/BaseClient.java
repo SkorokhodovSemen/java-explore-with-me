@@ -1,9 +1,11 @@
 package ru.practicum.base;
 
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.lang.Nullable;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
+import ru.practicum.ViewStatsDto;
 
 import java.util.List;
 import java.util.Map;
@@ -14,6 +16,32 @@ public class BaseClient {
 
     public BaseClient(RestTemplate rest) {
         this.rest = rest;
+    }
+
+    protected ResponseEntity<List<ViewStatsDto>> getListStats(String s, Map<String, Object> parameters) {
+        return makeAndSendRequest2(s, parameters);
+    }
+
+    private static ResponseEntity<List<ViewStatsDto>> prepareClientResponse2(ResponseEntity<List<ViewStatsDto>> response) {
+        if (response.getStatusCode().is2xxSuccessful()) {
+            return response;
+        }
+        ResponseEntity.BodyBuilder responseBuilder = ResponseEntity.status(response.getStatusCode());
+        if (response.hasBody()) {
+            return responseBuilder.body(response.getBody());
+        }
+        return responseBuilder.build();
+    }
+
+    private ResponseEntity<List<ViewStatsDto>> makeAndSendRequest2(String path, @Nullable Map<String, Object> parameters) {
+        HttpEntity<List<ViewStatsDto>> requestEntity = new HttpEntity<>(null);
+        ResponseEntity<List<ViewStatsDto>> statsServiceResponse;
+        try {
+                statsServiceResponse = rest.exchange(path, HttpMethod.GET, requestEntity, new ParameterizedTypeReference<List<ViewStatsDto>>() {}, parameters);
+        } catch (HttpStatusCodeException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+        return prepareClientResponse2(statsServiceResponse);
     }
 
     protected ResponseEntity<Object> get(String path, @Nullable Map<String, Object> parameters) {

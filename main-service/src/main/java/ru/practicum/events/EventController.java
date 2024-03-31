@@ -58,13 +58,6 @@ public class EventController {
         endpointHitsDto.setUri(httpServletRequest.getRequestURI());
         endpointHitsDto.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         statsClient.create(endpointHitsDto);
-        List<String> uris = new ArrayList<>();
-        uris.add(httpServletRequest.getRequestURI());
-        ResponseEntity<Object> response = statsClient.getStats(LocalDateTime.now().minusYears(100), LocalDateTime.now().plusYears(100), uris, true);
-        Object object = response.getBody();
-        System.out.println();
-        System.out.println(object);
-        System.out.println();
-        return eventService.getEventsByIdForQuery(id);
+        return eventService.getEventsByIdForQuery(id, httpServletRequest.getRequestURI());
     }
 }

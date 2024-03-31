@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
+import ru.practicum.ViewStatsDto;
 import ru.practicum.base.BaseClient;
 import ru.practicum.EndpointHitsDto;
 
@@ -36,6 +37,16 @@ public class StatsClient extends BaseClient {
                 "unique", unique
         );
         return get("/stats?start={start}&end={end}&uris={uris}&unique={unique}", parameters);
+    }
+
+    public ResponseEntity<List<ViewStatsDto>> getStats2(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
+        Map<String, Object> parameters = Map.of(
+                "start", start.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                "end", end.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                "uris", uris.toArray(),
+                "unique", unique
+        );
+        return getListStats("/stats?start={start}&end={end}&uris={uris}&unique={unique}", parameters);
     }
 
     public ResponseEntity<Object> create(EndpointHitsDto endpointHitsDto) {

@@ -109,19 +109,21 @@ public class AdminController {
     }
 
     @PostMapping("/compilations")
+    @ResponseStatus(HttpStatus.CREATED)
     public CompilationDto createCompilation(@Validated(Create.class) @RequestBody PostCompilationDto postCompilationDto) {
         log.info("Create new compilation = {}", postCompilationDto);
         return compilationService.createCompilation(postCompilationDto);
     }
 
     @DeleteMapping("/compilations/{compId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteCompilationById(@PathVariable("compId") long compId) {
         log.info("Delete compilation with id = {}", compId);
         compilationService.deleteCompilationById(compId);
     }
 
     @PatchMapping("/compilations/{compId}")
-    public CompilationDto updateCompilationById(@Validated(Create.class) @RequestBody PostCompilationDto postCompilationDto,
+    public CompilationDto updateCompilationById(@Validated(Update.class) @RequestBody PostCompilationDto postCompilationDto,
                                                 @PathVariable("compId") long compId) {
         log.info("Update compilation = {}", compId);
         return compilationService.updateCompilationById(postCompilationDto, compId);

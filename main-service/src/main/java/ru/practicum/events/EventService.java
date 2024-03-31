@@ -26,7 +26,7 @@ public interface EventService {
 
     EventAdminPatchDto updateEventByIdForAdmin(EventAdminDto eventAdminDto, long eventId);
 
-    EventSearchDto getEventsByIdForQuery(long id);
+    EventSearchDto getEventsByIdForQuery(long id, String uri);
 
     List<EventAdminSearchDto> getEventsForQuery(String text,
                                                 Boolean paid,
@@ -39,6 +39,4 @@ public interface EventService {
                                                 int size,
                                                 String uri,
                                                 String ip);
-
-    void updateViews(long id);
 }
