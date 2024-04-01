@@ -32,7 +32,7 @@ public class EventController {
                                                        @Positive @RequestParam(name = "size", defaultValue = "10") int size,
                                                        @RequestParam(name = "paid", required = false) Boolean paid,
                                                        @RequestParam(name = "onlyAvailable", defaultValue = "false") boolean onlyAvailable,
-                                                       @RequestParam(name = "categories", defaultValue = "categories") List<Long> categories,
+                                                       @RequestParam(name = "categories", defaultValue = "") List<Long> categories,
                                                        @RequestParam(name = "rangeStart", defaultValue = "#{T(java.time.LocalDateTime).now()}") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeStart,
                                                        @RequestParam(name = "rangeEnd", defaultValue = "2500-01-01 00:00:00") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime rangeEnd,
                                                        @RequestParam(name = "sort", defaultValue = "VIEWS") String sort,

@@ -10,7 +10,6 @@ import ru.practicum.EndpointHitsDto;
 import ru.practicum.ViewStatsDto;
 import ru.practicum.service.StatsService;
 
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,8 +22,8 @@ public class StatsController {
     private final StatsService service;
 
     @GetMapping("/stats")
-    public List<ViewStatsDto> getStats(@NotNull @RequestParam(name = "start") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
-                                       @NotNull @RequestParam(name = "end") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
+    public List<ViewStatsDto> getStats(@RequestParam(name = "start", defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime start,
+                                       @RequestParam(name = "end", defaultValue = "") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime end,
                                        @RequestParam(name = "uris", defaultValue = "") List<String> uris,
                                        @RequestParam(name = "unique", defaultValue = "false") boolean unique) {
         log.info("Get stats with " +

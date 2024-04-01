@@ -16,7 +16,7 @@ import javax.validation.ValidationException;
 public class ErrorHandlerStats {
     @ExceptionHandler({ConstraintViolationException.class,
             MethodArgumentNotValidException.class,
-            MissingRequestHeaderException.class, ValidationException.class})
+            MissingRequestHeaderException.class, ValidationException.class, ValidationExceptionStats.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponseStats onMethodArgumentNotValidException(Exception e) {
         return new ErrorResponseStats(e.getMessage());

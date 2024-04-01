@@ -254,109 +254,28 @@ public class EventServiceImpl implements EventService {
             throw new ConflictException("Sort is not exist");
         }
         List<EventAdminSearchDto> eventAdminSearchDtos = new ArrayList<>();
-        if (paid == null) {
-            if (onlyAvailable) {
-                if (text.isBlank()) {
-                    List<Event> events = eventRepository.getEventsWithAllPaidAndOnlyAvailableWithoutText(categories, rangeStart, rangeEnd, pageable).getContent();
-                    for (Event event : events) {
-                        eventAdminSearchDtos
-                                .add(EventMapper.toEventAdminSearchDto(event,
-                                        eventRequestRepository.getCountConfirmedRequest(event.getId())));
-                    }
-                } else {
-                    List<Event> events = eventRepository.getEventsWithAllPaidAndOnlyAvailable(text, categories, rangeStart, rangeEnd, pageable).getContent();
-                    for (Event event : events) {
-                        eventAdminSearchDtos
-                                .add(EventMapper.toEventAdminSearchDto(event,
-                                        eventRequestRepository.getCountConfirmedRequest(event.getId())));
-                    }
-                }
+        List<Event> events;
+        if (onlyAvailable) {
+            if (categories.size() == 0) {
+                events = eventRepository.getEventsAvailableTrueCategoriesNotExist(text, paid, rangeStart, rangeEnd, pageable)
+                        .getContent();
             } else {
-                if (text.isBlank()) {
-                    List<Event> events = eventRepository.getEventsWithAllPaidAndNotAvailableWithoutText(categories, rangeStart, rangeEnd, pageable).getContent();
-                    System.out.println(events.size());
-                    for (Event event : events) {
-                        eventAdminSearchDtos
-                                .add(EventMapper.toEventAdminSearchDto(event,
-                                        eventRequestRepository.getCountConfirmedRequest(event.getId())));
-                    }
-                } else {
-                    List<Event> events = eventRepository.getEventsWithAllPaidAndNotAvailable(text, categories, rangeStart, rangeEnd, pageable).getContent();
-                    for (Event event : events) {
-                        eventAdminSearchDtos
-                                .add(EventMapper.toEventAdminSearchDto(event,
-                                        eventRequestRepository.getCountConfirmedRequest(event.getId())));
-                    }
-                }
-            }
-        } else if (paid.equals(true)) {
-            if (onlyAvailable) {
-                if (text.isBlank()) {
-                    List<Event> events = eventRepository.getEventsWithOnlyPaidAndOnlyAvailableWithoutText(categories, rangeStart, rangeEnd, pageable).getContent();
-                    for (Event event : events) {
-                        eventAdminSearchDtos
-                                .add(EventMapper.toEventAdminSearchDto(event,
-                                        eventRequestRepository.getCountConfirmedRequest(event.getId())));
-                    }
-                } else {
-                    List<Event> events = eventRepository.getEventsWithOnlyPaidAndOnlyAvailable(text, categories, rangeStart, rangeEnd, pageable).getContent();
-                    for (Event event : events) {
-                        eventAdminSearchDtos
-                                .add(EventMapper.toEventAdminSearchDto(event,
-                                        eventRequestRepository.getCountConfirmedRequest(event.getId())));
-                    }
-                }
-            } else {
-                if (text.isBlank()) {
-                    List<Event> events = eventRepository.getEventsWithOnlyPaidAndNotAvailableWithoutText(categories, rangeStart, rangeEnd, pageable).getContent();
-                    for (Event event : events) {
-                        eventAdminSearchDtos
-                                .add(EventMapper.toEventAdminSearchDto(event,
-                                        eventRequestRepository.getCountConfirmedRequest(event.getId())));
-                    }
-                } else {
-                    List<Event> events = eventRepository.getEventsWithOnlyPaidAndNotAvailable(text, categories, rangeStart, rangeEnd, pageable).getContent();
-                    for (Event event : events) {
-                        eventAdminSearchDtos
-                                .add(EventMapper.toEventAdminSearchDto(event,
-                                        eventRequestRepository.getCountConfirmedRequest(event.getId())));
-                    }
-                }
+                events = eventRepository.getEventsAvailableTrueCategoriesExist(text, paid, categories, rangeStart, rangeEnd, pageable)
+                        .getContent();
             }
         } else {
-            if (onlyAvailable) {
-                if (text.isBlank()) {
-                    List<Event> events = eventRepository.getEventsWithNotPaidAndOnlyAvailableWithoutText(categories, rangeStart, rangeEnd, pageable).getContent();
-                    for (Event event : events) {
-                        eventAdminSearchDtos
-                                .add(EventMapper.toEventAdminSearchDto(event,
-                                        eventRequestRepository.getCountConfirmedRequest(event.getId())));
-                    }
-                } else {
-                    List<Event> events = eventRepository.getEventsWithNotPaidAndOnlyAvailable(text, categories, rangeStart, rangeEnd, pageable).getContent();
-                    for (Event event : events) {
-                        eventAdminSearchDtos
-                                .add(EventMapper.toEventAdminSearchDto(event,
-                                        eventRequestRepository.getCountConfirmedRequest(event.getId())));
-                    }
-                }
+            if (categories.size() == 0) {
+                events = eventRepository.getEventsAvailableFalseCategoriesNotExist(text, paid, rangeStart, rangeEnd, pageable)
+                        .getContent();
             } else {
-                if (text.isBlank()) {
-                    List<Event> events = eventRepository.getEventsWithNotPaidAndNotAvailableWithoutText(categories, rangeStart, rangeEnd, pageable).getContent();
-                    for (Event event : events) {
-                        eventAdminSearchDtos
-                                .add(EventMapper.toEventAdminSearchDto(event,
-                                        eventRequestRepository.getCountConfirmedRequest(event.getId())));
-                    }
-                } else {
-                    List<Event> events = eventRepository.getEventsWithNotPaidAndNotAvailable(text, categories, rangeStart, rangeEnd, pageable).getContent();
-                    for (Event event : events) {
-                        eventAdminSearchDtos
-                                .add(EventMapper.toEventAdminSearchDto(event,
-                                        eventRequestRepository.getCountConfirmedRequest(event.getId())));
-                    }
-                }
+                events = eventRepository.getEventsAvailableFalseCategoriesExist(text, paid, categories, rangeStart, rangeEnd, pageable)
+                        .getContent();
             }
+        }
+        for (Event event : events) {
+            eventAdminSearchDtos
+                    .add(EventMapper.toEventAdminSearchDto(event,
+                            eventRequestRepository.getCountConfirmedRequest(event.getId())));
         }
         return eventAdminSearchDtos;
     }
