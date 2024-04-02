@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.categories.model.Category;
 import ru.practicum.compilations.dto.CompilationDto;
 import ru.practicum.compilations.dto.ResponseCompilationDto;
 import ru.practicum.compilations.model.Compilation;
@@ -17,7 +16,6 @@ import ru.practicum.events.model.Event;
 import ru.practicum.exception.NotFoundException;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,8 +33,6 @@ public class CompilationServiceImpl implements CompilationService {
             log.info("Compilation with id = {} not found", compId);
             return new NotFoundException("Compilation not found");
         });
-//        Optional<Compilation> compilationOptional = compilationRepository.findById(compId);
-//        validFoundForCompilation(compilationOptional, compId);
         compilationRepository.deleteById(compId);
     }
 
@@ -58,9 +54,6 @@ public class CompilationServiceImpl implements CompilationService {
             log.info("Compilation with id = {} not found", compId);
             return new NotFoundException("Compilation not found");
         });
-//        Optional<Compilation> compilationOptional = compilationRepository.findById(compId);
-//        validFoundForCompilation(compilationOptional, compId);
-//        Compilation compilation = compilationOptional.get();
         if (responseCompilationDto.getTitle() != null) {
             compilation.setTitle(responseCompilationDto.getTitle());
         }
@@ -98,8 +91,6 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     public CompilationDto getCompilationsById(long compId) {
-//        Optional<Compilation> compilationOptional = compilationRepository.findById(compId);
-//        validFoundForCompilation(compilationOptional, compId);
         Compilation compilation = compilationRepository.findById(compId).orElseThrow(() -> {
             log.info("Compilation with id = {} not found", compId);
             return new NotFoundException("Compilation not found");
