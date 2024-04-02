@@ -22,7 +22,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,10 +35,14 @@ public class EventRequestServiceImpl implements EventRequestService {
 
     @Override
     public List<EventRequestDto> getRequests(long userId, long eventId) {
-        Optional<User> userOptional = userRepository.findById(userId);
-        validFoundForUser(userOptional, userId);
-        Optional<Event> eventOptional = eventRepository.findById(eventId);
-        validFoundForEvent(eventOptional, eventId);
+        userRepository.findById(userId).orElseThrow(() -> {
+            log.info("User with id = {} not found", userId);
+            return new NotFoundException("User not found");
+        });
+        eventRepository.findById(eventId).orElseThrow(() -> {
+            log.info("Event with id = {} not found", eventId);
+            return new NotFoundException("Event not found");
+        });
         return eventRequestRepository.getEventRequestsByEventId(eventId, userId)
                 .stream()
                 .map(EventRequestMapper::toEventRequestDto)
@@ -50,11 +53,14 @@ public class EventRequestServiceImpl implements EventRequestService {
     @Transactional
     public ListChangeStatusEventRequestDto updateStatusEventRequest(ListEventRequestIdDto listEventRequestIdDto,
                                                                     long userId, long eventId) {
-        Optional<User> userOptional = userRepository.findById(userId);
-        validFoundForUser(userOptional, userId);
-        Optional<Event> eventOptional = eventRepository.findById(eventId);
-        validFoundForEvent(eventOptional, eventId);
-        Event event = eventOptional.get();
+        userRepository.findById(userId).orElseThrow(() -> {
+            log.info("User with id = {} not found", userId);
+            return new NotFoundException("User not found");
+        });
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> {
+            log.info("Event with id = {} not found", eventId);
+            return new NotFoundException("Event not found");
+        });
         if (userId != event.getInitiator().getId()) {
             log.info("User with id = {} can't change eventRequest for event with id = {} " +
                     "because it's not his Event", userId, eventId);
@@ -115,12 +121,14 @@ public class EventRequestServiceImpl implements EventRequestService {
     @Override
     @Transactional
     public EventRequestDto createEventRequest(long eventId, long userId) {
-        Optional<User> userOptional = userRepository.findById(userId);
-        validFoundForUser(userOptional, userId);
-        User user = userOptional.get();
-        Optional<Event> eventOptional = eventRepository.findById(eventId);
-        validFoundForEvent(eventOptional, eventId);
-        Event event = eventOptional.get();
+        User user = userRepository.findById(userId).orElseThrow(() -> {
+            log.info("User with id = {} not found", userId);
+            return new NotFoundException("User not found");
+        });
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> {
+            log.info("Event with id = {} not found", eventId);
+            return new NotFoundException("Event not found");
+        });
         if (!event.getState().equals(State.PUBLISHED)) {
             log.info("User with id = {} can't create eventRequest for event with id = {} " +
                     "because it's not PUBLISHED", userId, eventId);
@@ -164,8 +172,10 @@ public class EventRequestServiceImpl implements EventRequestService {
 
     @Override
     public List<EventRequestDto> getEventRequests(long userId) {
-        Optional<User> userOptional = userRepository.findById(userId);
-        validFoundForUser(userOptional, userId);
+        userRepository.findById(userId).orElseThrow(() -> {
+            log.info("User with id = {} not found", userId);
+            return new NotFoundException("User not found");
+        });
         return eventRequestRepository.getEventRequestsByRequesterId(userId)
                 .stream()
                 .map(EventRequestMapper::toEventRequestDto)
@@ -175,37 +185,19 @@ public class EventRequestServiceImpl implements EventRequestService {
     @Override
     @Transactional
     public EventRequestDto canceledEventRequest(long userId, long requestId) {
-        Optional<User> userOptional = userRepository.findById(userId);
-        validFoundForUser(userOptional, userId);
-        Optional<EventRequest> eventRequestOptional = eventRequestRepository.findById(requestId);
-        validFoundForEventRequest(eventRequestOptional, requestId);
-        EventRequest eventRequest = eventRequestOptional.get();
+        userRepository.findById(userId).orElseThrow(() -> {
+            log.info("User with id = {} not found", userId);
+            return new NotFoundException("User not found");
+        });
+        EventRequest eventRequest = eventRequestRepository.findById(requestId).orElseThrow(() -> {
+            log.info("EventRequest with id = {} not found", requestId);
+            return new NotFoundException("EventRequest not found");
+        });
         if (eventRequest.getRequester().getId() != userId) {
             log.info("User with id = {} can't canceled eventRequest with id = {}", userId, requestId);
             throw new ConflictException("You can't cancel this eventRequest");
         }
         eventRequest.setStatus(Status.CANCELED);
         return EventRequestMapper.toEventRequestDto(eventRequestRepository.save(eventRequest));
-    }
-
-    private void validFoundForEventRequest(Optional<EventRequest> eventRequest, long requestId) {
-        if (eventRequest.isEmpty()) {
-            log.info("EventRequest with id = {} not found", requestId);
-            throw new NotFoundException("EventRequest not found");
-        }
-    }
-
-    private void validFoundForUser(Optional<User> user, long id) {
-        if (user.isEmpty()) {
-            log.info("User with id = {} not found", id);
-            throw new NotFoundException("User not found");
-        }
-    }
-
-    private void validFoundForEvent(Optional<Event> event, long eventId) {
-        if (event.isEmpty()) {
-            log.info("Event with id = {} not found", eventId);
-            throw new NotFoundException("Event not found");
-        }
     }
 }

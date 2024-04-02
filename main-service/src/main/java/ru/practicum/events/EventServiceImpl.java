@@ -44,10 +44,14 @@ public class EventServiceImpl implements EventService {
         if (eventEntityDto.getParticipantLimit() != null && eventEntityDto.getParticipantLimit() < 0) {
             throw new ValidationException("ParticipantLimit must be positive");
         }
-        Optional<Category> categoryOptional = categoryRepository.findById(eventEntityDto.getCategory());
-        validFoundForCategory(categoryOptional, eventEntityDto.getCategory());
-        Optional<User> userOptional = userRepository.findById(userId);
-        validFoundForUser(userOptional, userId);
+        Category category = categoryRepository.findById(eventEntityDto.getCategory()).orElseThrow(() -> {
+            log.info("Category with id = {} not found", eventEntityDto.getCategory());
+            return new NotFoundException("Category not found");
+        });
+        User user = userRepository.findById(userId).orElseThrow(() -> {
+            log.info("User with id = {} not found", userId);
+            return new NotFoundException("User not found");
+        });
         if (eventEntityDto.getPaid() == null) {
             eventEntityDto.setPaid(false);
         }
@@ -58,15 +62,17 @@ public class EventServiceImpl implements EventService {
             eventEntityDto.setRequestModeration(true);
         }
         return EventMapper.toEventCreatedDto(eventRepository.save(EventMapper.toEvent(eventEntityDto,
-                userOptional.get(),
-                categoryOptional.get())));
+                user,
+                category)));
     }
 
     @Override
     public List<EventDto> getEvents(long userId, int from, int size) {
         Pageable page = PageRequest.of(from / size, size);
-        Optional<User> userOptional = userRepository.findById(userId);
-        validFoundForUser(userOptional, userId);
+        userRepository.findById(userId).orElseThrow(() -> {
+            log.info("User with id = {} not found", userId);
+            return new NotFoundException("User not found");
+        });
         return eventRepository.getAllEventsByUserId(userId, page)
                 .getContent()
                 .stream()
@@ -76,11 +82,14 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventFullDto getEventById(long userId, long eventId) {
-        Optional<User> userOptional = userRepository.findById(userId);
-        validFoundForUser(userOptional, userId);
-        Optional<Event> eventOptional = eventRepository.findById(eventId);
-        validFoundForEvent(eventOptional, eventId);
-        Event event = eventOptional.get();
+        userRepository.findById(userId).orElseThrow(() -> {
+            log.info("User with id = {} not found", userId);
+            return new NotFoundException("User not found");
+        });
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> {
+            log.info("Event with id = {} not found", eventId);
+            return new NotFoundException("Event not found");
+        });
         if (event.getInitiator().getId() != userId) {
             throw new NotFoundException("Event with id = " + eventId + " not found for user with id = " + userId);
         } else {
@@ -91,10 +100,14 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional
     public EventAdminPatchDto updateEvent(EventAdminDto eventAdminDto, long userId, long eventId) {
-        Optional<User> userOptional = userRepository.findById(userId);
-        validFoundForUser(userOptional, userId);
-        Optional<Event> eventOptional = eventRepository.findById(eventId);
-        validFoundForEvent(eventOptional, eventId);
+        userRepository.findById(userId).orElseThrow(() -> {
+            log.info("User with id = {} not found", userId);
+            return new NotFoundException("User not found");
+        });
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> {
+            log.info("Event with id = {} not found", eventId);
+            return new NotFoundException("Event not found");
+        });
         if (eventAdminDto.getParticipantLimit() != null && eventAdminDto.getParticipantLimit() < 0) {
             throw new ValidationException("ParticipantLimit must be positive");
         }
@@ -104,13 +117,14 @@ public class EventServiceImpl implements EventService {
                 throw new ValidationException("Start is before 2 hours");
             }
         }
-        Event event = eventOptional.get();
         if (event.getInitiator().getId() != userId) {
             throw new NotFoundException("Event with id = " + eventId + " not found for user with id = " + userId);
         }
         if (eventAdminDto.getCategory() != null) {
-            Optional<Category> categoryOptional = categoryRepository.findById(eventAdminDto.getCategory());
-            validFoundForCategory(categoryOptional, eventAdminDto.getCategory());
+            categoryRepository.findById(eventAdminDto.getCategory()).orElseThrow(() -> {
+                log.info("Category with id = {} not found", eventAdminDto.getCategory());
+                return new NotFoundException("Category not found");
+            });
         }
         validStatusForEvent(event, eventId);
         if (eventAdminDto.getStateAction() != null) {
@@ -176,8 +190,10 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional
     public EventAdminPatchDto updateEventByIdForAdmin(EventAdminDto eventAdminDto, long eventId) {
-        Optional<Event> eventOptional = eventRepository.findById(eventId);
-        Event event = eventOptional.get();
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> {
+            log.info("Event with id = {} not found", eventId);
+            return new NotFoundException("Event not found");
+        });
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         if (event.getEventDate().isBefore(LocalDateTime.now())) {
             throw new ValidationException("Event is end");
@@ -214,9 +230,10 @@ public class EventServiceImpl implements EventService {
     @Override
     @Transactional
     public EventSearchDto getEventsByIdForQuery(long id, String uri) {
-        Optional<Event> eventOptional = eventRepository.findById(id);
-        validFoundForEvent(eventOptional, id);
-        Event event = eventOptional.get();
+        Event event = eventRepository.findById(id).orElseThrow(() -> {
+            log.info("Event with id = {} not found", id);
+            return new NotFoundException("Event not found");
+        });
         if (!event.getState().equals(State.PUBLISHED)) {
             log.info("Event with id = {} must have State.PUBLISHED", id);
             throw new NotFoundException("Event not Published");
@@ -281,37 +298,13 @@ public class EventServiceImpl implements EventService {
     }
 
     private void updateViewsForOneEvent(long id, String uri) {
-        Optional<Event> eventOptional = eventRepository.findById(id);
-        validFoundForEvent(eventOptional, id);
-        Event event = eventOptional.get();
+        Event event = eventRepository.findById(id).get();
         List<String> uris = new ArrayList<>();
         uris.add(uri);
         List<ViewStatsDto> viewStatsDtos1 = statsClient.getStats(LocalDateTime.now().minusYears(100),
                 LocalDateTime.now().plusYears(100), uris, true).getBody();
         event.setViews(viewStatsDtos1.get(0).getHits());
         eventRepository.save(event);
-    }
-
-
-    private void validFoundForCategory(Optional<Category> category, long catId) {
-        if (category.isEmpty()) {
-            log.info("Category with id = {} not found", catId);
-            throw new NotFoundException("Category not found");
-        }
-    }
-
-    private void validFoundForUser(Optional<User> user, long userId) {
-        if (user.isEmpty()) {
-            log.info("User with id = {} not found", userId);
-            throw new NotFoundException("User not found");
-        }
-    }
-
-    private void validFoundForEvent(Optional<Event> event, long eventId) {
-        if (event.isEmpty()) {
-            log.info("Event with id = {} not found", eventId);
-            throw new NotFoundException("Event not found");
-        }
     }
 
     private void validStatusForEvent(Event event, long eventId) {

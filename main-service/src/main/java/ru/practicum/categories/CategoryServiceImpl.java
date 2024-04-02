@@ -12,7 +12,6 @@ import ru.practicum.categories.model.CategoryMapper;
 import ru.practicum.exception.NotFoundException;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,18 +31,21 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public CategoryDto updateCategory(long catId, CategoryDto categoryDto) {
-        Optional<Category> categoryOptional = categoryRepository.findById(catId);
-        validFoundForCategory(categoryOptional, catId);
-        Category category = categoryOptional.get();
+        Category category = categoryRepository.findById(catId).orElseThrow(() -> {
+            log.info("Category with id = {} not found", catId);
+            return new NotFoundException("Category not found");
+        });
         category.setName(categoryDto.getName());
         return CategoryMapper.toCategoriesDto(categoryRepository.save(category));
     }
 
     @Override
     public CategoryDto getCategoryById(long catId) {
-        Optional<Category> categoryOptional = categoryRepository.findById(catId);
-        validFoundForCategory(categoryOptional, catId);
-        return CategoryMapper.toCategoriesDto(categoryOptional.get());
+        Category category = categoryRepository.findById(catId).orElseThrow(() -> {
+            log.info("Category with id = {} not found", catId);
+            return new NotFoundException("Category not found");
+        });
+        return CategoryMapper.toCategoriesDto(category);
     }
 
     @Override
@@ -60,15 +62,10 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     @Transactional
     public void deleteCategoryById(long catId) {
-        Optional<Category> category = categoryRepository.findById(catId);
-        validFoundForCategory(category, catId);
-        categoryRepository.deleteById(catId);
-    }
-
-    private void validFoundForCategory(Optional<Category> category, long catId) {
-        if (category.isEmpty()) {
+        categoryRepository.findById(catId).orElseThrow(() -> {
             log.info("Category with id = {} not found", catId);
-            throw new NotFoundException("Category not found");
-        }
+            return new NotFoundException("Category not found");
+        });
+        categoryRepository.deleteById(catId);
     }
 }

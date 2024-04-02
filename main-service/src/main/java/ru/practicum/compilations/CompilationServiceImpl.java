@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.categories.model.Category;
 import ru.practicum.compilations.dto.CompilationDto;
 import ru.practicum.compilations.dto.ResponseCompilationDto;
 import ru.practicum.compilations.model.Compilation;
@@ -30,8 +31,12 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     @Transactional
     public void deleteCompilationById(long compId) {
-        Optional<Compilation> compilationOptional = compilationRepository.findById(compId);
-        validFoundForCompilation(compilationOptional, compId);
+        Compilation compilation = compilationRepository.findById(compId).orElseThrow(() -> {
+            log.info("Compilation with id = {} not found", compId);
+            return new NotFoundException("Compilation not found");
+        });
+//        Optional<Compilation> compilationOptional = compilationRepository.findById(compId);
+//        validFoundForCompilation(compilationOptional, compId);
         compilationRepository.deleteById(compId);
     }
 
@@ -49,9 +54,13 @@ public class CompilationServiceImpl implements CompilationService {
     @Override
     @Transactional
     public CompilationDto updateCompilationById(ResponseCompilationDto responseCompilationDto, long compId) {
-        Optional<Compilation> compilationOptional = compilationRepository.findById(compId);
-        validFoundForCompilation(compilationOptional, compId);
-        Compilation compilation = compilationOptional.get();
+        Compilation compilation = compilationRepository.findById(compId).orElseThrow(() -> {
+            log.info("Compilation with id = {} not found", compId);
+            return new NotFoundException("Compilation not found");
+        });
+//        Optional<Compilation> compilationOptional = compilationRepository.findById(compId);
+//        validFoundForCompilation(compilationOptional, compId);
+//        Compilation compilation = compilationOptional.get();
         if (responseCompilationDto.getTitle() != null) {
             compilation.setTitle(responseCompilationDto.getTitle());
         }
@@ -89,15 +98,19 @@ public class CompilationServiceImpl implements CompilationService {
 
     @Override
     public CompilationDto getCompilationsById(long compId) {
-        Optional<Compilation> compilationOptional = compilationRepository.findById(compId);
-        validFoundForCompilation(compilationOptional, compId);
-        return CompilationMapper.toCompilationDto(compilationOptional.get());
+//        Optional<Compilation> compilationOptional = compilationRepository.findById(compId);
+//        validFoundForCompilation(compilationOptional, compId);
+        Compilation compilation = compilationRepository.findById(compId).orElseThrow(() -> {
+            log.info("Compilation with id = {} not found", compId);
+            return new NotFoundException("Compilation not found");
+        });
+        return CompilationMapper.toCompilationDto(compilation);
     }
 
-    private void validFoundForCompilation(Optional<Compilation> compilationOptional, long compId) {
-        if (compilationOptional.isEmpty()) {
-            log.info("Compilation with id = {} not found", compId);
-            throw new NotFoundException("Compilation not found");
-        }
-    }
+//    private void validFoundForCompilation(Optional<Compilation> compilationOptional, long compId) {
+//        if (compilationOptional.isEmpty()) {
+//            log.info("Compilation with id = {} not found", compId);
+//            throw new NotFoundException("Compilation not found");
+//        }
+//    }
 }

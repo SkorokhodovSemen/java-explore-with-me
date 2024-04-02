@@ -12,7 +12,6 @@ import ru.practicum.user.model.User;
 import ru.practicum.user.model.UserMapper;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,8 +42,10 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void deleteUserById(Long id) {
-        Optional<User> user = userRepository.findById(id);
-        validFoundForUser(user, id);
+        userRepository.findById(id).orElseThrow(() -> {
+            log.info("User with id = {} not found", id);
+            return new NotFoundException("User not found");
+        });
         userRepository.deleteById(id);
     }
 
@@ -52,12 +53,5 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDto createUser(UserDto userDto) {
         return UserMapper.toUserDto(userRepository.save(UserMapper.toUser(userDto)));
-    }
-
-    private void validFoundForUser(Optional<User> user, long id) {
-        if (user.isEmpty()) {
-            log.info("User with id = {} not found", id);
-            throw new NotFoundException("User not found");
-        }
     }
 }
