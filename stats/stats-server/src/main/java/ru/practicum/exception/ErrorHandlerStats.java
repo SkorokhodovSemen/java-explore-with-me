@@ -9,23 +9,24 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.validation.ConstraintViolationException;
+import javax.validation.ValidationException;
 
 @RestControllerAdvice
 @Slf4j
-public class ErrorHandler {
+public class ErrorHandlerStats {
     @ExceptionHandler({ConstraintViolationException.class,
             MethodArgumentNotValidException.class,
-            MissingRequestHeaderException.class})
+            MissingRequestHeaderException.class, ValidationException.class, ValidationExceptionStats.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse onMethodArgumentNotValidException(Exception e) {
-        return new ErrorResponse(e.getMessage());
+    public ErrorResponseStats onMethodArgumentNotValidException(Exception e) {
+        return new ErrorResponseStats(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handleThrowable(final Throwable e) {
+    public ErrorResponseStats handleThrowable(final Throwable e) {
         log.debug(e.getMessage());
-        return new ErrorResponse(
+        return new ErrorResponseStats(
                 "Произошла непредвиденная ошибка."
         );
     }
