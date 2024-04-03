@@ -4,7 +4,6 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import ru.practicum.categories.model.Category;
 import ru.practicum.compilations.model.Compilation;
-import ru.practicum.location.dto.LocationDto;
 import ru.practicum.location.model.Location;
 import ru.practicum.user.model.User;
 
