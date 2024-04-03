@@ -4,6 +4,8 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import ru.practicum.categories.model.Category;
 import ru.practicum.compilations.model.Compilation;
+import ru.practicum.location.dto.LocationDto;
+import ru.practicum.location.model.Location;
 import ru.practicum.user.model.User;
 
 import javax.persistence.*;
@@ -27,8 +29,6 @@ public class Event {
     private LocalDateTime eventDate;
     @Column(name = "created_on")
     private LocalDateTime createdOn;
-    private Float lon;
-    private Float lat;
     private Boolean paid;
     @Column(name = "participant_limit")
     private long participantLimit;
@@ -45,4 +45,7 @@ public class Event {
     private LocalDateTime publishedOn;
     @ManyToMany(mappedBy = "events")
     private Set<Compilation> compilations;
+    @ManyToOne
+    @JoinColumn(name = "location")
+    private Location location;
 }

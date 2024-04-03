@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.EndpointHitsDto;
 import ru.practicum.client.StatsClient;
 import ru.practicum.events.dto.EventAdminSearchDto;
+import ru.practicum.events.dto.EventDto;
 import ru.practicum.events.dto.EventSearchDto;
 
 import javax.servlet.http.HttpServletRequest;
@@ -63,5 +64,35 @@ public class EventController {
         endpointHitsDto.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         statsClient.create(endpointHitsDto);
         return eventService.getEventsByIdForQuery(id, httpServletRequest.getRequestURI());
+    }
+
+    @GetMapping("/locations/{locId}")
+    public List<EventDto> getEventsByLocationId(@PathVariable("locId") long locId,
+                                                @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") int from,
+                                                @Positive @RequestParam(name = "size", defaultValue = "10") int size,
+                                                HttpServletRequest httpServletRequest) {
+        log.info("Get events with locId = {}", locId);
+        EndpointHitsDto endpointHitsDto = new EndpointHitsDto();
+        endpointHitsDto.setIp(httpServletRequest.getRemoteAddr());
+        endpointHitsDto.setApp("ewm-main-service");
+        endpointHitsDto.setUri(httpServletRequest.getRequestURI());
+        endpointHitsDto.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        statsClient.create(endpointHitsDto);
+        return eventService.getEventsByLocationId(locId, from, size);
+    }
+
+    @GetMapping("/locations")
+    public List<EventDto> getEventsByLocationTitle(@PositiveOrZero @RequestParam(name = "from", defaultValue = "0") int from,
+                                                   @Positive @RequestParam(name = "size", defaultValue = "10") int size,
+                                                   @RequestParam(name = "title") String title,
+                                                   HttpServletRequest httpServletRequest) {
+        log.info("Get events with location title = {}", title);
+        EndpointHitsDto endpointHitsDto = new EndpointHitsDto();
+        endpointHitsDto.setIp(httpServletRequest.getRemoteAddr());
+        endpointHitsDto.setApp("ewm-main-service");
+        endpointHitsDto.setUri(httpServletRequest.getRequestURI());
+        endpointHitsDto.setTimestamp(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+        statsClient.create(endpointHitsDto);
+        return eventService.getEventsByLocationTitle(title, from, size);
     }
 }
