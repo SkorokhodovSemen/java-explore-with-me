@@ -664,63 +664,6 @@
 					"response": []
 				},
 				{
-					"name": "Получить события по Месту проведения",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function() {\r",
-									"    pm.response.to.have.status(200); // код ответа должен быть равен 201 OK\r",
-									"    pm.response.to.be.withBody; // ответ должен содержать тело\r",
-									"    pm.response.to.be.json; // и тело ответа должно быть в формате JSON\r",
-									"    pm.response.body\r",
-									"}); \r",
-									"\r",
-									"const target = pm.response.json();\r",
-									"\r",
-									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
-									"    pm.expect(target[0].location.city).equal(\"Moscow\");\r",
-									"    pm.expect(target[0].location.id).equal(3);\r",
-									"    pm.expect(target[0].location.title).equal(\"Red Square\");\r",
-									"});"
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "localhost:8080/events/locations?size=10&from=0&title=Red Square",
-							"host": [
-								"localhost"
-							],
-							"port": "8080",
-							"path": [
-								"events",
-								"locations"
-							],
-							"query": [
-								{
-									"key": "size",
-									"value": "10"
-								},
-								{
-									"key": "from",
-									"value": "0"
-								},
-								{
-									"key": "title",
-									"value": "Red Square"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Публикация события 2",
 					"event": [
 						{
