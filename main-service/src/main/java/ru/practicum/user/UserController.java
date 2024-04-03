@@ -14,7 +14,6 @@ import ru.practicum.request.dto.ListEventRequestIdDto;
 import ru.practicum.valid.Create;
 import ru.practicum.valid.Update;
 
-
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
