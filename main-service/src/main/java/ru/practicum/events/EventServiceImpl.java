@@ -352,9 +352,9 @@ public class EventServiceImpl implements EventService {
         Event event = eventRepository.findById(id).get();
         List<String> uris = new ArrayList<>();
         uris.add(uri);
-        List<ViewStatsDto> viewStatsDtos1 = statsClient.getStats(LocalDateTime.now().minusYears(100),
+        List<ViewStatsDto> viewStatsDtos = statsClient.getStats(LocalDateTime.now().minusYears(100),
                 LocalDateTime.now().plusYears(100), uris, true).getBody();
-        event.setViews(viewStatsDtos1.get(0).getHits());
+        event.setViews(viewStatsDtos.get(0).getHits());
         eventRepository.save(event);
     }
 

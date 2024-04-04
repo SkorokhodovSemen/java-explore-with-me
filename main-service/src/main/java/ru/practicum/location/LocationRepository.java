@@ -8,8 +8,6 @@ import ru.practicum.location.model.Location;
 import java.util.List;
 
 public interface LocationRepository extends JpaRepository<Location, Long> {
-    ;
-
     @Procedure(value = "distance")
     List<Float> findRangeToLocation(Float lat1, Float lon1, Float lat2, Float lon2);
 

@@ -1,13 +1,16 @@
 package ru.practicum.location.model;
 
-import lombok.Data;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Table(name = "locations")
-@Data
+@Getter
+@Setter
+@ToString
+@AllArgsConstructor
 @RequiredArgsConstructor
 public class Location {
     @Id
@@ -19,4 +22,17 @@ public class Location {
     private String city;
     private String description;
     private Float rad;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Location)) return false;
+        Location location = (Location) o;
+        return Objects.equals(id, location.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

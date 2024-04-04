@@ -97,11 +97,4 @@ public class CompilationServiceImpl implements CompilationService {
         });
         return CompilationMapper.toCompilationDto(compilation);
     }
-
-//    private void validFoundForCompilation(Optional<Compilation> compilationOptional, long compId) {
-//        if (compilationOptional.isEmpty()) {
-//            log.info("Compilation with id = {} not found", compId);
-//            throw new NotFoundException("Compilation not found");
-//        }
-//    }
 }

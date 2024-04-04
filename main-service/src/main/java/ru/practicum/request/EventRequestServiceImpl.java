@@ -134,11 +134,6 @@ public class EventRequestServiceImpl implements EventRequestService {
                     "because it's not PUBLISHED", userId, eventId);
             throw new ConflictException("You can't create eventRequest because it's not PUBLISHED");
         }
-        if (event.getState().equals(State.CANCELED)) {
-            log.info("User with id = {} can't create eventRequest for event with id = {} " +
-                    "because it's CANCELED", userId, eventId);
-            throw new ConflictException("You can't create eventRequest because it's CANCELED");
-        }
         if (event.getInitiator().getId() == userId) {
             log.info("User with id = {} can't create eventRequest for him event with id = {}", userId, eventId);
             throw new ConflictException("You can't create eventRequest for your Event");
