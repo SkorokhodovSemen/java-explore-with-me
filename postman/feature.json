@@ -1,0 +1,1141 @@
+{
+	"info": {
+		"_postman_id": "a99a3d54-f8c4-446f-b6dc-53145266528d",
+		"name": "Test EWM - feature_location",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30697760"
+	},
+	"item": [
+		{
+			"name": "Standard test",
+			"item": [
+				{
+					"name": "Добавление в бд локации администратором",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function() {\r",
+									"    pm.response.to.have.status(201); // код ответа должен быть равен 201 OK\r",
+									"    pm.response.to.be.withBody; // ответ должен содержать тело\r",
+									"    pm.response.to.be.json; // и тело ответа должно быть в формате JSON\r",
+									"    pm.response.body\r",
+									"}); \r",
+									"\r",
+									"const target = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Локация должна содержать поля: id, city, title, lat, lon, rad, description\", function () {\r",
+									"pm.expect(target).to.have.property('id');\r",
+									"pm.expect(target).to.have.property('city');\r",
+									"pm.expect(target).to.have.property('title');\r",
+									"pm.expect(target).to.have.property('lat');\r",
+									"pm.expect(target).to.have.property('lon');\r",
+									"pm.expect(target).to.have.property('rad');\r",
+									"pm.expect(target).to.have.property('description');\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"lat\":59.938991,\r\n    \"lon\":30.315473,\r\n    \"rad\":\"1\",\r\n    \"title\":\"Palace Square\",\r\n    \"city\":\"Saint-Petersburg\",\r\n    \"description\":\"The main square of St. Petersburg, an architectural ensemble that arose in the second half of the 18th - first half of the 19th century.\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/admin/locations?Content-Type=application/json&Accept=application/json",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"locations"
+							],
+							"query": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Accept",
+									"value": "application/json"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Получение локации по id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function() {\r",
+									"    pm.response.to.have.status(200); // код ответа должен быть равен 200 OK\r",
+									"    pm.response.to.be.withBody; // ответ должен содержать тело\r",
+									"    pm.response.to.be.json; // и тело ответа должно быть в формате JSON\r",
+									"    pm.response.body\r",
+									"}); \r",
+									"\r",
+									"const target = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
+									"    pm.expect(target.id).equal(1);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:8080/admin/locations/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"locations",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Удаление локации по Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 204\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});\r",
+									"\r",
+									"pm.sendRequest({\r",
+									"        url: \"localhost:8080\" + \"/admin/locations/\" + 1,\r",
+									"        method: 'GET',\r",
+									"    }, (error, response) => {\r",
+									"        pm.test(\"Категория не должна быть найдена после удаления\", function () {\r",
+									"            pm.expect(response.code).to.eql(404);\r",
+									"        });\r",
+									"    });"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "localhost:8080/admin/locations/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"locations",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Добавление в бд локации администратором для обновления",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function() {\r",
+									"    pm.response.to.have.status(201); // код ответа должен быть равен 201 OK\r",
+									"    pm.response.to.be.withBody; // ответ должен содержать тело\r",
+									"    pm.response.to.be.json; // и тело ответа должно быть в формате JSON\r",
+									"    pm.response.body\r",
+									"}); \r",
+									"\r",
+									"const target = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Локация должна содержать поля: id, city, title, lat, lon, rad, description\", function () {\r",
+									"pm.expect(target).to.have.property('id');\r",
+									"pm.expect(target).to.have.property('city');\r",
+									"pm.expect(target).to.have.property('title');\r",
+									"pm.expect(target).to.have.property('lat');\r",
+									"pm.expect(target).to.have.property('lon');\r",
+									"pm.expect(target).to.have.property('rad');\r",
+									"pm.expect(target).to.have.property('description');\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"lat\":59.938991,\r\n    \"lon\":30.315473,\r\n    \"rad\":\"1\",\r\n    \"title\":\"Palace Square\",\r\n    \"city\":\"Saint-Petersburg\",\r\n    \"description\":\"The main square of St. Petersburg, an architectural ensemble that arose in the second half of the 18th - first half of the 19th century.\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/admin/locations?Content-Type=application/json&Accept=application/json",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"locations"
+							],
+							"query": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Accept",
+									"value": "application/json"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Обновить локацию",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function() {\r",
+									"    pm.response.to.have.status(200); // код ответа должен быть равен 200 OK\r",
+									"    pm.response.to.be.withBody; // ответ должен содержать тело\r",
+									"    pm.response.to.be.json; // и тело ответа должно быть в формате JSON\r",
+									"    pm.response.body\r",
+									"}); \r",
+									"\r",
+									"const target = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Локация должна содержать поля: id, city, title, lat, lon, rad, description\", function () {\r",
+									"pm.expect(target).to.have.property('id');\r",
+									"pm.expect(target).to.have.property('city');\r",
+									"pm.expect(target).to.have.property('title');\r",
+									"pm.expect(target).to.have.property('lat');\r",
+									"pm.expect(target).to.have.property('lon');\r",
+									"pm.expect(target).to.have.property('rad');\r",
+									"pm.expect(target).to.have.property('description');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
+									"    pm.expect(target.id).equal(2);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\":\"Дворцовая площадь\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/admin/locations/2",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"locations",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Получение всех локаций",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function() {\r",
+									"    pm.response.to.have.status(200); // код ответа должен быть равен 200 OK\r",
+									"    pm.response.to.be.withBody; // ответ должен содержать тело\r",
+									"    pm.response.to.be.json; // и тело ответа должно быть в формате JSON\r",
+									"    pm.response.body\r",
+									"}); \r",
+									"\r",
+									"const target = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
+									"    pm.expect(target[0].id).equal(2);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "localhost:8080/admin/locations",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"locations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Добавление нового пользователя",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function() {\r",
+									"    pm.response.to.have.status(201); // код ответа должен быть равен 201 OK\r",
+									"    pm.response.to.be.withBody; // ответ должен содержать тело\r",
+									"    pm.response.to.be.json; // и тело ответа должно быть в формате JSON\r",
+									"    pm.response.body\r",
+									"}); "
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"Semen Pavlovich\",\r\n    \"email\":\"semen@semen.ru\"\r\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/admin/users",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Добавление новой категории",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function() {\r",
+									"    pm.response.to.have.status(201); // код ответа должен быть равен 201 OK\r",
+									"    pm.response.to.be.withBody; // ответ должен содержать тело\r",
+									"    pm.response.to.be.json; // и тело ответа должно быть в формате JSON\r",
+									"    pm.response.body\r",
+									"}); "
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"Test Semen Pavlovich\"\r\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/admin/categories",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"categories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Добавить событие с существующей локацией в бд",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function() {\r",
+									"    pm.response.to.have.status(201); // код ответа должен быть равен 201 OK\r",
+									"    pm.response.to.be.withBody; // ответ должен содержать тело\r",
+									"    pm.response.to.be.json; // и тело ответа должно быть в формате JSON\r",
+									"    pm.response.body\r",
+									"}); \r",
+									"\r",
+									"const target = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
+									"    pm.expect(target.id).equal(1);\r",
+									"    pm.expect(target.location.id).equal(2);\r",
+									"    pm.expect(target.location.title).equal(\"Дворцовая площадь\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"annotation\":\"annotation Semen Pavlovich\",\r\n    \"category\":1,\r\n    \"description\":\"description Semen Pavlovich\",\r\n    \"eventDate\":\"2028-10-16 12:00:00\",\r\n    \"location\":{\r\n        \"lat\":59.938,\r\n        \"lon\":30.315\r\n    },\r\n    \"paid\":true,\r\n    \"participantLimit\":0,\r\n    \"requestModeration\":false,\r\n    \"title\":\"Happy Birthday Semen Pavlovich\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/users/1/events",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"1",
+								"events"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Добавить событие с несуществующей локацией в бд",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 201 и данные в формате json\", function() {\r",
+									"    pm.response.to.have.status(201); // код ответа должен быть равен 201 OK\r",
+									"    pm.response.to.be.withBody; // ответ должен содержать тело\r",
+									"    pm.response.to.be.json; // и тело ответа должно быть в формате JSON\r",
+									"    pm.response.body\r",
+									"}); \r",
+									"\r",
+									"const target = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
+									"    pm.expect(target.id).equal(2);\r",
+									"    pm.expect(target.location.id).equal(3);\r",
+									"    pm.expect(target.location.title).equal(\"Unknown\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"annotation\":\"annotation2 Semen Pavlovich\",\r\n    \"category\":1,\r\n    \"description\":\"description2 Semen Pavlovich\",\r\n    \"eventDate\":\"2028-10-16 12:00:00\",\r\n    \"location\":{\r\n        \"lat\":55.753544,\r\n        \"lon\":37.621202\r\n    },\r\n    \"paid\":true,\r\n    \"participantLimit\":0,\r\n    \"requestModeration\":false,\r\n    \"title\":\"Happy Birthday Semen Pavlovich\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/users/1/events",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"users",
+								"1",
+								"events"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Добавление в бд такой же локации администратором",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function() {\r",
+									"    pm.response.to.have.status(400); // код ответа должен быть равен 201 OK\r",
+									"}); \r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"lat\":59.938991,\r\n    \"lon\":30.315473,\r\n    \"rad\":\"1\",\r\n    \"title\":\"Palace Square\",\r\n    \"city\":\"Saint-Petersburg\",\r\n    \"description\":\"The main square of St. Petersburg, an architectural ensemble that arose in the second half of the 18th - first half of the 19th century.\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/admin/locations?Content-Type=application/json&Accept=application/json",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"locations"
+							],
+							"query": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Accept",
+									"value": "application/json"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Обновить список неизвестных локаций",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function() {\r",
+									"    pm.response.to.have.status(200); // код ответа должен быть равен 201 OK\r",
+									"    pm.response.to.be.withBody; // ответ должен содержать тело\r",
+									"    pm.response.to.be.json; // и тело ответа должно быть в формате JSON\r",
+									"    pm.response.body\r",
+									"}); \r",
+									"\r",
+									"const target = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
+									"    pm.expect(target[0].id).equal(3);\r",
+									"    pm.expect(target[0].city).equal(\"Moscow\");\r",
+									"    pm.expect(target[0].title).equal(\"Red Square\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\r\n    {\r\n    \"id\":3,\r\n    \"lat\":55.753544,\r\n    \"lon\":37.621202,\r\n    \"rad\":\"1\",\r\n    \"title\":\"Red Square\",\r\n    \"city\":\"Moscow\",\r\n    \"description\":\"The main square of Moscow and Russia, located between the Moscow Kremlin (to the west) and China Town (to the east).\"\r\n    }\r\n]\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/admin/locations",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"locations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Публикация события 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 200 и данные в формате json\", function() {\r",
+									"    pm.response.to.have.status(200); // код ответа должен быть равен 201 OK\r",
+									"    pm.response.to.be.withBody; // ответ должен содержать тело\r",
+									"    pm.response.to.be.json; // и тело ответа должно быть в формате JSON\r",
+									"    pm.response.body\r",
+									"}); \r",
+									"\r",
+									"const target = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
+									"    pm.expect(target.id).equal(2);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"stateAction\":\"PUBLISH_EVENT\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/admin/events/2",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"events",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Проверить, что измененные локации, появляются в запросах на событие",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Ответ должен содержать код статуса 200 и данные в формате json', function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"    pm.response.to.be.withBody;\r",
+									"    pm.response.to.be.json;\r",
+									"    pm.response.body;\r",
+									"})\r",
+									"\r",
+									"const target = pm.response.json()[0];\r",
+									"\r",
+									"pm.test(\"Данные в ответе должны соответствовать данным в запросе\", function () {\r",
+									"    const target = pm.response.json();\r",
+									"    pm.expect(target.location.city).to.equal(\"Moscow\");\r",
+									"    pm.expect(target.location.id).to.equal(3);\r",
+									"    pm.expect(target.location.title).to.equal(\"Red Square\");\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/events/2",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"events",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Validation",
+			"item": [
+				{
+					"name": "Обновить локацию с неизвестным id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 404 и данные в формате json\", function() {\r",
+									"    pm.response.to.have.status(404); // код ответа должен быть равен 201 OK\r",
+									"}); \r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"lat\":59.938991,\r\n    \"lon\":30.315473,\r\n    \"rad\":\"1\",\r\n    \"title\":\"Palace Square\",\r\n    \"city\":\"Saint-Petersburg\",\r\n    \"description\":\"The main square of St. Petersburg, an architectural ensemble that arose in the second half of the 18th - first half of the 19th century.\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/admin/locations/30",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"locations",
+								"30"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Удалить локацию с неизвестным id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 404 и данные в формате json\", function() {\r",
+									"    pm.response.to.have.status(404); // код ответа должен быть равен 201 OK\r",
+									"}); \r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/admin/locations/30",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"locations",
+								"30"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Получить локацию с неизвестным id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 404 и данные в формате json\", function() {\r",
+									"    pm.response.to.have.status(404); // код ответа должен быть равен 201 OK\r",
+									"}); "
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:8080/admin/locations/30",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"locations",
+								"30"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Добавить локацию с пустым названием",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function() {\r",
+									"    pm.response.to.have.status(400); // код ответа должен быть равен 400 OK\r",
+									"}); \r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"lat\":59.938991,\r\n    \"lon\":30.315473,\r\n    \"rad\":\"1\",\r\n    \"title\":\"   \",\r\n    \"city\":\"Saint-Petersburg\",\r\n    \"description\":\"The main square of St. Petersburg, an architectural ensemble that arose in the second half of the 18th - first half of the 19th century.\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/admin/locations?Content-Type=application/json&Accept=application/json",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"locations"
+							],
+							"query": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Accept",
+									"value": "application/json"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Добавить локацию с пустым описанием",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function() {\r",
+									"    pm.response.to.have.status(400); // код ответа должен быть равен 400 OK\r",
+									"}); \r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"lat\":59.938991,\r\n    \"lon\":30.315473,\r\n    \"rad\":\"1\",\r\n    \"title\":\"Happy\",\r\n    \"city\":\"Saint-Petersburg\",\r\n    \"description\":\" \"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/admin/locations?Content-Type=application/json&Accept=application/json",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"locations"
+							],
+							"query": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Accept",
+									"value": "application/json"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Добавить локацию с городом > 100",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function() {\r",
+									"    pm.response.to.have.status(400); // код ответа должен быть равен 400 OK\r",
+									"}); \r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"lat\":59.938991,\r\n    \"lon\":30.315473,\r\n    \"rad\":\"1\",\r\n    \"title\":\"Happy\",\r\n    \"city\":\"Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean ma\",\r\n    \"description\":\"The main square of St. Petersburg, an architectural ensemble that arose in the second half of the 18th - first half of the 19th century.\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/admin/locations?Content-Type=application/json&Accept=application/json",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"locations"
+							],
+							"query": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Accept",
+									"value": "application/json"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Добавить локацию с пустым городом",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function() {\r",
+									"    pm.response.to.have.status(400); // код ответа должен быть равен 400 OK\r",
+									"}); \r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"lat\":59.938991,\r\n    \"lon\":30.315473,\r\n    \"rad\":\"1\",\r\n    \"title\":\"Happy\",\r\n    \"city\":\" \",\r\n    \"description\":\"The main square of St. Petersburg, an architectural ensemble that arose in the second half of the 18th - first half of the 19th century.\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/admin/locations?Content-Type=application/json&Accept=application/json",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"locations"
+							],
+							"query": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Accept",
+									"value": "application/json"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Добавить локацию с названием  > 250",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Ответ должен содержать код статуса 400 и данные в формате json\", function() {\r",
+									"    pm.response.to.have.status(400); // код ответа должен быть равен 400 OK\r",
+									"}); \r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"lat\":59.938991,\r\n    \"lon\":30.315473,\r\n    \"rad\":\"1\",\r\n    \"title\":\"Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec.\",\r\n    \"city\":\"Saint-Petersburg\",\r\n    \"description\":\"The main square of St. Petersburg, an architectural ensemble that arose in the second half of the 18th - first half of the 19th century.\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:8080/admin/locations?Content-Type=application/json&Accept=application/json",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"admin",
+								"locations"
+							],
+							"query": [
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Accept",
+									"value": "application/json"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

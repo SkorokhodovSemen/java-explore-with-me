@@ -102,5 +102,16 @@ public interface EventRepository extends JpaRepository<Event, Long> {
                                                           @Param("start") LocalDateTime rangeStart,
                                                           @Param("end") LocalDateTime rangeEnd,
                                                           Pageable pageable);
+
+    @Query(value = "SELECT e FROM Event e WHERE " +
+            "e.location.id = ?1 " +
+            "AND e.state = 'PUBLISHED'")
+    Page<Event> getEventsByLocationId(long locId, Pageable page);
+
+    @Query(value = "SELECT e FROM Event e WHERE " +
+            "e.location.title = ?1 " +
+            "AND e.state = 'PUBLISHED'")
+    Page<Event> getEventsByLocationTitle(String title, Pageable page);
 }
+
 

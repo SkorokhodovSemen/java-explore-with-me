@@ -2,7 +2,7 @@ package ru.practicum.events.dto;
 
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import ru.practicum.events.model.Location;
+import ru.practicum.location.dto.LocationDto;
 import ru.practicum.valid.*;
 
 import javax.validation.constraints.*;
@@ -23,12 +23,9 @@ public class EventEntityDto {
     @NotNull(groups = {Create.class})
     private String eventDate;
     @NotNull(groups = Create.class)
-    private Location location;
-    //    @NotNull(groups = Create.class)
+    private LocationDto location;
     private Boolean paid;
-    //    @PositiveOrZero(groups = {Create.class})
     private Long participantLimit;
-    //    @NotNull(groups = Create.class)
     private Boolean requestModeration;
     @NotBlank(groups = Create.class)
     @Size(min = 3, max = 120, groups = {Create.class, Update.class, Admin.class})

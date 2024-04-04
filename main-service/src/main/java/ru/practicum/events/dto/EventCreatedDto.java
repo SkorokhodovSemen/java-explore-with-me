@@ -3,7 +3,7 @@ package ru.practicum.events.dto;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import ru.practicum.categories.model.Category;
-import ru.practicum.events.model.Location;
+import ru.practicum.location.dto.LocationDto;
 import ru.practicum.events.model.State;
 import ru.practicum.user.model.User;
 
@@ -15,7 +15,7 @@ public class EventCreatedDto {
     private Category category;
     private String description;
     private String eventDate;
-    private Location location;
+    private LocationDto location;
     private Boolean paid;
     private long participantLimit;
     private boolean requestModeration;

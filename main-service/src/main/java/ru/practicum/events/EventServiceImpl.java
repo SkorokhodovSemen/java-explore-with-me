@@ -18,6 +18,8 @@ import ru.practicum.events.model.State;
 import ru.practicum.exception.ConflictException;
 import ru.practicum.exception.NotFoundException;
 import ru.practicum.exception.ValidationException;
+import ru.practicum.location.LocationRepository;
+import ru.practicum.location.model.Location;
 import ru.practicum.request.EventRequestRepository;
 import ru.practicum.user.UserRepository;
 import ru.practicum.user.model.User;
@@ -37,6 +39,7 @@ public class EventServiceImpl implements EventService {
     private final UserRepository userRepository;
     private final EventRequestRepository eventRequestRepository;
     private final StatsClient statsClient;
+    private final LocationRepository locationRepository;
 
     @Override
     @Transactional
@@ -61,9 +64,35 @@ public class EventServiceImpl implements EventService {
         if (eventEntityDto.getRequestModeration() == null) {
             eventEntityDto.setRequestModeration(true);
         }
+        Location locationToCreate = new Location();
+        List<Location> locationsTest = locationRepository.findNotUnknownLocation();
+        long i = 0;
+        if (locationsTest.size() != 0) {
+            for (Location location : locationsTest) {
+                float distance = locationRepository.findRangeToLocation(eventEntityDto.getLocation().getLat(),
+                        eventEntityDto.getLocation().getLon(),
+                        location.getLat(),
+                        location.getLon()).get(0);
+                if (distance < location.getRad()) {
+                    locationToCreate = location;
+                    i++;
+                    break;
+                }
+            }
+        }
+        if (locationsTest.size() == 0 || i == 0) {
+            locationToCreate.setCity("Unknown");
+            locationToCreate.setLat(eventEntityDto.getLocation().getLat());
+            locationToCreate.setLon(eventEntityDto.getLocation().getLon());
+            locationToCreate.setRad(0F);
+            locationToCreate.setDescription("Not description");
+            locationToCreate.setTitle("Unknown");
+            locationToCreate = locationRepository.save(locationToCreate);
+        }
         return EventMapper.toEventCreatedDto(eventRepository.save(EventMapper.toEvent(eventEntityDto,
                 user,
-                category)));
+                category,
+                locationToCreate)));
     }
 
     @Override
@@ -297,13 +326,35 @@ public class EventServiceImpl implements EventService {
         return eventAdminSearchDtos;
     }
 
+    @Override
+    public List<EventDto> getEventsByLocationId(long locId, int from, int size) {
+        Pageable page = PageRequest.of(from / size, size);
+        locationRepository.findById(locId).orElseThrow(() -> {
+            log.info("Location with id = {} not found", locId);
+            return new NotFoundException("Location not found");
+        });
+        return eventRepository.getEventsByLocationId(locId, page).getContent()
+                .stream()
+                .map(EventMapper::toEventDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<EventDto> getEventsByLocationTitle(String title, int from, int size) {
+        Pageable page = PageRequest.of(from / size, size);
+        return eventRepository.getEventsByLocationTitle(title, page).getContent()
+                .stream()
+                .map(EventMapper::toEventDto)
+                .collect(Collectors.toList());
+    }
+
     private void updateViewsForOneEvent(long id, String uri) {
         Event event = eventRepository.findById(id).get();
         List<String> uris = new ArrayList<>();
         uris.add(uri);
-        List<ViewStatsDto> viewStatsDtos1 = statsClient.getStats(LocalDateTime.now().minusYears(100),
+        List<ViewStatsDto> viewStatsDtos = statsClient.getStats(LocalDateTime.now().minusYears(100),
                 LocalDateTime.now().plusYears(100), uris, true).getBody();
-        event.setViews(viewStatsDtos1.get(0).getHits());
+        event.setViews(viewStatsDtos.get(0).getHits());
         eventRepository.save(event);
     }
 
@@ -329,8 +380,32 @@ public class EventServiceImpl implements EventService {
             event.setEventDate(LocalDateTime.parse(eventEntityDto.getEventDate(), formatter));
         }
         if (eventEntityDto.getLocation() != null) {
-            event.setLat(eventEntityDto.getLocation().getLat());
-            event.setLon(eventEntityDto.getLocation().getLon());
+            Location locationToCreate = new Location();
+            List<Location> locationsTest = locationRepository.findNotUnknownLocation();
+            long i = 0;
+            if (locationsTest.size() != 0) {
+                for (Location location : locationsTest) {
+                    Float distance = locationRepository.findRangeToLocation(eventEntityDto.getLocation().getLat(),
+                            eventEntityDto.getLocation().getLon(),
+                            location.getLat(),
+                            location.getLon()).get(0);
+                    if (distance < location.getRad()) {
+                        locationToCreate = location;
+                        i++;
+                        break;
+                    }
+                }
+            }
+            if (locationsTest.size() == 0 || i == 0) {
+                locationToCreate.setCity("Unknown");
+                locationToCreate.setLat(eventEntityDto.getLocation().getLat());
+                locationToCreate.setLon(eventEntityDto.getLocation().getLon());
+                locationToCreate.setRad(0F);
+                locationToCreate.setDescription("Not description");
+                locationToCreate.setTitle("Unknown");
+                locationToCreate = locationRepository.save(locationToCreate);
+            }
+            event.setLocation(locationToCreate);
         }
         if (eventEntityDto.getPaid() != null) {
             event.setPaid(eventEntityDto.getPaid());

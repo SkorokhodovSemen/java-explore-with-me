@@ -3,6 +3,8 @@ package ru.practicum.events.model;
 import ru.practicum.categories.model.Category;
 import ru.practicum.categories.model.CategoryMapper;
 import ru.practicum.events.dto.*;
+import ru.practicum.location.model.Location;
+import ru.practicum.location.model.LocationMapper;
 import ru.practicum.user.model.User;
 import ru.practicum.user.model.UserMapper;
 
@@ -12,11 +14,10 @@ import java.time.format.DateTimeFormatter;
 public abstract class EventMapper {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    public static Event toEvent(EventEntityDto eventEntityDto, User user, Category category) {
+    public static Event toEvent(EventEntityDto eventEntityDto, User user, Category category, Location location) {
         Event event = new Event();
         event.setRequestModeration(eventEntityDto.getRequestModeration());
-        event.setLon(eventEntityDto.getLocation().getLon());
-        event.setLat(eventEntityDto.getLocation().getLat());
+        event.setLocation(location);
         event.setDescription(eventEntityDto.getDescription());
         event.setParticipantLimit(eventEntityDto.getParticipantLimit());
         event.setState(State.PENDING);
@@ -43,10 +44,7 @@ public abstract class EventMapper {
         eventDto.setPublishedOn(event.getPublishedOn());
         eventDto.setDescription(event.getDescription());
         eventDto.setTitle(event.getTitle());
-        Location location = new Location();
-        location.setLat(event.getLat());
-        location.setLon(event.getLon());
-        eventDto.setLocation(location);
+        eventDto.setLocation(LocationMapper.toLocationDto(event.getLocation()));    //Внесено изменение
         eventDto.setParticipantLimit(event.getParticipantLimit());
         eventDto.setRequestModeration(event.isRequestModeration());
         eventDto.setState(event.getState());
@@ -78,10 +76,7 @@ public abstract class EventMapper {
         eventFullDto.setPublishedOn(event.getPublishedOn());
         eventFullDto.setDescription(event.getDescription());
         eventFullDto.setTitle(event.getTitle());
-        Location location = new Location();
-        location.setLat(event.getLat());
-        location.setLon(event.getLon());
-        eventFullDto.setLocation(location);
+        eventFullDto.setLocation(LocationMapper.toLocationDto(event.getLocation()));    //Внесено изменение
         eventFullDto.setParticipantLimit(event.getParticipantLimit());
         eventFullDto.setRequestModeration(event.isRequestModeration());
         eventFullDto.setState(event.getState());
@@ -91,9 +86,6 @@ public abstract class EventMapper {
     }
 
     public static EventCreatedDto toEventCreatedDto(Event event) {
-        Location location = new Location();
-        location.setLat(event.getLat());
-        location.setLon(event.getLon());
         EventCreatedDto eventCreatedDto = new EventCreatedDto();
         eventCreatedDto.setInitiator(event.getInitiator());
         eventCreatedDto.setCategory(event.getCategory());
@@ -104,7 +96,7 @@ public abstract class EventMapper {
         eventCreatedDto.setCreatedOn(LocalDateTime.now().format(DATE_TIME_FORMATTER));
         eventCreatedDto.setDescription(event.getDescription());
         eventCreatedDto.setTitle(event.getTitle());
-        eventCreatedDto.setLocation(location);
+        eventCreatedDto.setLocation(LocationMapper.toLocationDto(event.getLocation()));
         eventCreatedDto.setParticipantLimit(event.getParticipantLimit());
         eventCreatedDto.setRequestModeration(event.isRequestModeration());
         eventCreatedDto.setState(event.getState());
@@ -113,9 +105,6 @@ public abstract class EventMapper {
 
     public static EventAdminSearchDto toEventAdminSearchDto(Event event, long confirmedRequest) {
         EventAdminSearchDto eventAdminSearchDto = new EventAdminSearchDto();
-        Location location = new Location();
-        location.setLat(event.getLat());
-        location.setLon(event.getLon());
         eventAdminSearchDto.setId(event.getId());
         eventAdminSearchDto.setTitle(event.getTitle());
         eventAdminSearchDto.setAnnotation(event.getAnnotation());
@@ -129,7 +118,7 @@ public abstract class EventMapper {
         eventAdminSearchDto.setParticipantLimit(event.getParticipantLimit());
         eventAdminSearchDto.setRequestModeration(event.isRequestModeration());
         eventAdminSearchDto.setState(event.getState());
-        eventAdminSearchDto.setLocation(location);
+        eventAdminSearchDto.setLocation(LocationMapper.toLocationDto(event.getLocation()));
         eventAdminSearchDto.setCreatedOn(event.getCreatedOn().format(DATE_TIME_FORMATTER));
         if (event.getPublishedOn() != null) {
             eventAdminSearchDto.setPublishedOn(event.getPublishedOn().format(DATE_TIME_FORMATTER));
@@ -149,10 +138,7 @@ public abstract class EventMapper {
         eventAdminPatchDto.setPublishedOn(event.getPublishedOn());
         eventAdminPatchDto.setDescription(event.getDescription());
         eventAdminPatchDto.setTitle(event.getTitle());
-        Location location = new Location();
-        location.setLat(event.getLat());
-        location.setLon(event.getLon());
-        eventAdminPatchDto.setLocation(location);
+        eventAdminPatchDto.setLocation(LocationMapper.toLocationDto(event.getLocation()));
         eventAdminPatchDto.setParticipantLimit(event.getParticipantLimit());
         eventAdminPatchDto.setRequestModeration(event.isRequestModeration());
         eventAdminPatchDto.setState(event.getState());
@@ -172,10 +158,7 @@ public abstract class EventMapper {
         eventSearchDto.setPublishedOn(event.getPublishedOn());
         eventSearchDto.setDescription(event.getDescription());
         eventSearchDto.setTitle(event.getTitle());
-        Location location = new Location();
-        location.setLat(event.getLat());
-        location.setLon(event.getLon());
-        eventSearchDto.setLocation(location);
+        eventSearchDto.setLocation(LocationMapper.toLocationDto(event.getLocation()));
         eventSearchDto.setParticipantLimit(event.getParticipantLimit());
         eventSearchDto.setRequestModeration(event.isRequestModeration());
         eventSearchDto.setState(event.getState());

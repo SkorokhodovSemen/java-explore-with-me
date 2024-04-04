@@ -38,4 +38,9 @@ public interface EventService {
                                                 int size,
                                                 String uri,
                                                 String ip);
+
+    List<EventDto> getEventsByLocationId(long locId, int from, int size);
+
+    List<EventDto> getEventsByLocationTitle(String title, int from, int size);
+
 }

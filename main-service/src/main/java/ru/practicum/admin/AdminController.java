@@ -16,6 +16,8 @@ import ru.practicum.events.dto.EventAdminDto;
 import ru.practicum.events.dto.EventAdminPatchDto;
 import ru.practicum.events.dto.EventAdminSearchDto;
 import ru.practicum.events.model.State;
+import ru.practicum.location.LocationService;
+import ru.practicum.location.dto.LocationDto;
 import ru.practicum.user.UserService;
 import ru.practicum.user.dto.UserDto;
 import ru.practicum.valid.Admin;
@@ -37,6 +39,7 @@ public class AdminController {
     private final CategoryService categoryService;
     private final EventService eventService;
     private final CompilationService compilationService;
+    private final LocationService locationService;
 
 
     @GetMapping("/users")
@@ -125,5 +128,45 @@ public class AdminController {
                                                 @PathVariable("compId") long compId) {
         log.info("Update compilation = {}", compId);
         return compilationService.updateCompilationById(responseCompilationDto, compId);
+    }
+
+    @PostMapping("/locations")
+    @ResponseStatus(HttpStatus.CREATED)
+    public LocationDto createLocation(@Validated(Create.class) @RequestBody LocationDto locationDto) {
+        log.info("Create new location = {}", locationDto);
+        return locationService.createLocation(locationDto);
+    }
+
+    @PatchMapping("/locations/{locId}")
+    public LocationDto updateLocation(@Validated(Update.class) @RequestBody LocationDto locationDto,
+                                      @PathVariable("locId") long locId) {
+        log.info("Update location with id = {}", locId);
+        return locationService.updateLocation(locId, locationDto);
+    }
+
+    @PatchMapping("/locations")
+    public List<LocationDto> updateUnknownLocations(@Validated(Update.class) @RequestBody List<LocationDto> locationDtos) {
+        log.info("Update location with body = {}", locationDtos);
+        return locationService.updateUnknownLocations(locationDtos);
+    }
+
+    @DeleteMapping("/locations/{locId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteLocationById(@PathVariable("locId") long locId) {
+        log.info("Delete location with id = {}", locId);
+        locationService.deleteLocationById(locId);
+    }
+
+    @GetMapping("/locations")
+    public List<LocationDto> getLocations(@PositiveOrZero @RequestParam(name = "from", defaultValue = "0") int from,
+                                          @Positive @RequestParam(name = "size", defaultValue = "10") int size) {
+        log.info("Get locations for admin");
+        return locationService.getLocations(from, size);
+    }
+
+    @GetMapping("/locations/{locId}")
+    public LocationDto getLocationsById(@PathVariable("locId") long locId) {
+        log.info("Get locations for admin by id = {}", locId);
+        return locationService.getLocationsById(locId);
     }
 }

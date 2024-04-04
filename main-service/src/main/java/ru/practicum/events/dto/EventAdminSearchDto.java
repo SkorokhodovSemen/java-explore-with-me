@@ -3,7 +3,7 @@ package ru.practicum.events.dto;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import ru.practicum.categories.model.Category;
-import ru.practicum.events.model.Location;
+import ru.practicum.location.dto.LocationDto;
 import ru.practicum.events.model.State;
 import ru.practicum.user.model.User;
 
@@ -25,7 +25,7 @@ public class EventAdminSearchDto implements Comparable<EventAdminSearchDto> {
     private State state;
     private String createdOn;
     private String publishedOn;
-    private Location location;
+    private LocationDto location;
 
     @Override
     public int compareTo(EventAdminSearchDto o) {
