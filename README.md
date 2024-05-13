@@ -1,4 +1,7 @@
 # Explore With Me  
+## About  
+This application is designed to host events by users that can take place anywhere in the world. And also for the opportunity to take part in them.  
+The program can identify familiar places that have been entered into the database by the administrator.  
 ## Applications  
 ### main-service  
 * Main application  
