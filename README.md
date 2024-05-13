@@ -1,8 +1,8 @@
 # Explore With Me  
 ## Applications  
-*main-service*  
+### main-service  
 * Main application  
-*stats*  
+### stats  
 * stats-dto - contains DTO for stats  
 * stats-client - contains RestTemplate  
 * stats-server - application for StatsServer  
