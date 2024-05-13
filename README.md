@@ -1,5 +1,5 @@
 # Explore With Me  
-**Applications**  
+## Applications  
 *main-service*  
 Main application  
 *stats*  
