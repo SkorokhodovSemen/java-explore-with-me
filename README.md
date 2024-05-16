@@ -11,6 +11,7 @@ The program can identify familiar places that have been entered into the databas
 * stats-server - application for StatsServer
 ### Postman  
 Package postman contains base test for geography feature  
+## Diagram  
 ![diagram (1)](https://github.com/SkorokhodovSemen/java-explore-with-me/assets/80544964/8548bdfe-9482-4715-8b7d-0128dbb6e133)  
 ## How to run the application using Docker  
 Run *mvn clean package* to build the applications and create the docker image locally.  
