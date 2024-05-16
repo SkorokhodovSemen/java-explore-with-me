@@ -17,7 +17,7 @@ Package postman contains base test for geography feature
 Run *mvn clean package* to build the applications and create the docker image locally.  
 Run *docker-compose up* to start the applications.  
 ##  Technology stack  
-* Spring
+* SpringBoot
 * Docker
 * Hibernate
 * PostgreSQL
